@@ -634,7 +634,7 @@ html, body {
   
   function showDescription() {
     const xmlPath = `set/${problemId}.xml`;
-
+    alert(xmlPath);
     fetch(xmlPath)
         .then(r => r.text())
         .then(str => (new DOMParser()).parseFromString(str, "text/xml"))
@@ -720,5 +720,6 @@ html, body {
 </body>
 
 </html>
+
 
 
