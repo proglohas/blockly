@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <problems>
-  <problem>
-    <id>a001</id>
-    <name>Hello world</name>
-  </problem>
-  
+  <problem id="a001" name="Hello world"/>
 </problems>
