@@ -2,46 +2,36 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>題目列表</title>
+<title>Problem List</title>
 <style>
-  body { font-family: sans-serif; margin: 20px; }
-  h1 { margin-bottom: 10px; }
-  ul { list-style: none; padding: 0; }
-  li { margin: 5px 0; }
-  a { text-decoration: none; color: #007bff; }
-  a:hover { text-decoration: underline; }
+body { font-family:sans-serif; padding:20px; }
+h1 { margin-bottom:10px; }
+a { display:block; margin:5px 0; text-decoration:none; color:#007bff; }
+a:hover { text-decoration:underline; }
 </style>
 </head>
 <body>
-
 <h1>題目列表</h1>
-<ul id="problemList">
-  <!-- 題目列表會由 JS 填入 -->
-</ul>
+<div id="problemList">Loading...</div>
 
 <script>
-  // 讀 problemset.xml
-  fetch('problemset.xml')
-    .then(response => response.text())
-    .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-    .then(data => {
-      const problems = data.getElementsByTagName('problem');
-      const list = document.getElementById('problemList');
-      for(let i=0; i<problems.length; i++){
-        const id = problems[i].getElementsByTagName('id')[0].textContent;
-        const name = problems[i].getElementsByTagName('name')[0].textContent;
-
-        // 建立超連結
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.textContent = `${id} - ${name}`;
-        a.href = `test.html?input=set/${id}.in&answer=set/${id}.out`;
-        li.appendChild(a);
-        list.appendChild(li);
-      }
-    })
-    .catch(err => console.error("讀取 XML 失敗:", err));
+fetch('problemset.xml')
+  .then(resp => resp.text())
+  .then(str => (new DOMParser()).parseFromString(str,"text/xml"))
+  .then(xml => {
+    const listDiv = document.getElementById('problemList');
+    listDiv.innerHTML = '';
+    const problems = xml.getElementsByTagName('problem');
+    for(let i=0;i<problems.length;i++){
+      const id = problems[i].getElementsByTagName('id')[0].textContent;
+      const name = problems[i].getElementsByTagName('name')[0].textContent;
+      const a = document.createElement('a');
+      a.href = `train.html?id=${id}`;
+      a.textContent = `${id} - ${name}`;
+      listDiv.appendChild(a);
+    }
+  })
+  .catch(err => { console.error(err); document.getElementById('problemList').textContent='讀取錯誤'; });
 </script>
-
 </body>
 </html>
