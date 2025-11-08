@@ -4,8 +4,5 @@
     <id>a001</id>
     <name>Hello world</name>
   </problem>
-  <problem>
-    <id>a002</id>
-    <name>簡易加法</name>
-  </problem>
+  
 </problems>
