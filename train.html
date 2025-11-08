@@ -636,22 +636,28 @@ html, body {
     const xmlPath = `set/${currentId}.xml`;
     
     fetch(xmlPath)
-        .then(r => r.text())
+        .then(r => {
+             if (!r.ok) {
+                 // 這裡提供 HTTP 錯誤碼
+                 throw new Error(`無法載入題目文件: ${xmlPath} (HTTP Status: ${r.status})`);
+             }
+             return r.text();
+        })
         .then(str => (new DOMParser()).parseFromString(str, "text/xml"))
         .then(xml => {
-            const title = xml.getElementsByTagName("title")[0]?.textContent || "（無標題）";
-            const desc  = xml.getElementsByTagName("description")[0]?.textContent || "（無說明）";
-
-            document.getElementById("descTitle").innerText = title;
-            document.getElementById("descText").innerText = desc;
-
-            document.getElementById("descModal").style.display = "block";
+             // ... 顯示邏輯 ...
+             // 確保能取得 title 和 description
+             const title = xml.getElementsByTagName("title")[0]?.textContent || "（無標題）";
+             // ...
+             
+             document.getElementById("descModal").style.display = "block";
         })
         .catch(err => {
             console.error(err);
-            alert("讀取題目說明失敗！");
+            // 🚨 將 alert 訊息修改得更明確 🚨
+            alert("讀取題目說明失敗！請檢查檔案路徑。詳細錯誤請看主控台(F12)。\n錯誤訊息: " + err.message);
         });
-  }
+}
     
   function closeDescModal() {
     document.getElementById("descModal").style.display = "none";
@@ -720,6 +726,7 @@ html, body {
 </body>
 
 </html>
+
 
 
 
