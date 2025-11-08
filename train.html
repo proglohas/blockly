@@ -633,8 +633,8 @@ html, body {
   }
   
   function showDescription() {
-      alert("error");
-    ///const xmlPath = `set/${currentId}.xml`;
+      
+    const xmlPath = `set/${currentId}.xml`;
     
     fetch(xmlPath)
         .then(r => {
@@ -657,7 +657,7 @@ html, body {
             console.error(err);
             // 🚨 將 alert 訊息修改得更明確 🚨
             alert("讀取題目說明失敗！請檢查檔案路徑。詳細錯誤請看主控台(F12)。\n錯誤訊息: " + err.message);
-        });///
+        });
 }
     
   function closeDescModal() {
@@ -727,6 +727,7 @@ html, body {
 </body>
 
 </html>
+
 
 
 
