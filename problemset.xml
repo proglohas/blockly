@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <id>a001</id>
+    <name>Hello world</name>
+  </problem>
+  <problem>
+    <id>a002</id>
+    <name>簡易加法</name>
+  </problem>
+</problems>
