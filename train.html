@@ -252,17 +252,8 @@ html, body {
     </div>
 </div>
 
-<!-- 題目說明 modal -->
-<div id="descModal" class="modal" style="display: none;">
-    <div id="descContent">
-        ...
-        <button onclick="closeDescModal()">關閉</button>
-    </div>
-</div>
-
 <script>
   // **【全域變數】**
-  let currentId = null; // 全域儲存 id
   let workspace;
   let currentLanguage = 'zh-hant';
   let isResizing = false;
@@ -632,52 +623,9 @@ html, body {
     input.click();
   }
   
-  function showDescription() {
-    if (!currentId) return alert("無法取得題目 ID");
+  function showDescription(){
 
-    const xmlPath = `set/${currentId}.xml`;
-
-    fetch(xmlPath)
-        .then(res => {
-            if (!res.ok) throw new Error(`無法讀取 ${xmlPath}`);
-            return res.text();
-        })
-        .then(text => {
-            // 假設 XML 格式如下：
-            // <problem>
-            //   <title>題目名稱</title>
-            //   <description>題目說明文字</description>
-            // </problem>
-            let parser = new DOMParser();
-            let xmlDoc = parser.parseFromString(text, "text/xml");
-
-            let title = xmlDoc.getElementsByTagName("title")[0]?.textContent || "無題目名稱";
-            let description = xmlDoc.getElementsByTagName("description")[0]?.textContent || "無題目說明";
-
-            // 將內容放入 modal
-            const modal = document.getElementById("descModal");
-            const modalContent = document.getElementById("modalContent");
-            
-            modalContent.innerHTML = `
-                <h3>${title}</h3>
-                <p style="white-space: pre-wrap;">${description}</p>
-                <div class="modal-buttons">
-                    <button onclick="closeDescModal()">關閉</button>
-                </div>
-            `;
-
-            modal.style.display = "flex";
-        })
-        .catch(err => {
-            console.error(err);
-            alert("讀取題目說明失敗: " + err);
-        });
-}
-
-// 3️⃣ 關閉 modal
-function closeDescModal() {
-    document.getElementById('descModal').style.display = 'none';
-}
+  }
 
   function loadIOFromId() {
     // 解析 URL query string
@@ -718,13 +666,7 @@ function closeDescModal() {
     loadLanguage('zh-hant');
 
     blocklyDiv.style.flex = lastBlocklyWidth;
-    // 讀取 ?id=
-    const params = new URLSearchParams(window.location.search);
-    currentId = params.get("id") || null;
-
-    // 🚀 自動載入 Input/Answer
-    if(currentId) loadIOFromId();
-      
+    loadIOFromId();
     // 從 URL hash 載入 XML
     if(location.hash.startsWith("#xml=")){
       setTimeout(() => {
@@ -743,4 +685,3 @@ function closeDescModal() {
 </body>
 
 </html>
-
