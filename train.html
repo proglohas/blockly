@@ -626,7 +626,39 @@ html, body {
   function showDescription(){
 
   }
-  
+
+  function loadIOFromId() {
+    // 解析 URL query string
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    if (!id) return; // 沒有 id 就不做事
+
+    const inputPath = `set/${id}.in`;
+    const ansPath   = `set/${id}.out`;
+
+    // 讀取 input
+    fetch(inputPath)
+        .then(res => {
+            if (!res.ok) throw new Error(`無法讀取 ${inputPath}`);
+            return res.text();
+        })
+        .then(text => {
+            document.getElementById("inputContent").value = text;
+        })
+        .catch(err => console.error(err));
+
+    // 讀取 answer
+    fetch(ansPath)
+        .then(res => {
+            if (!res.ok) throw new Error(`無法讀取 ${ansPath}`);
+            return res.text();
+        })
+        .then(text => {
+            document.getElementById("ansContent").value = text;
+        })
+        .catch(err => console.error(err));
+  }
+
   // 初始載入
   window.onload = ()=>{
     enableResize();  // 啟用左右寬度拖曳
@@ -634,7 +666,7 @@ html, body {
     loadLanguage('zh-hant');
 
     blocklyDiv.style.flex = lastBlocklyWidth;
-
+    loadIOFromId();
     // 從 URL hash 載入 XML
     if(location.hash.startsWith("#xml=")){
       setTimeout(() => {
@@ -651,4 +683,5 @@ html, body {
 </script>
 
 </body>
+
 </html>
