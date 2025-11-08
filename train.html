@@ -31,8 +31,8 @@ html, body {
 #inputContent, #ansContent { flex-grow:1; border:1px solid #ddd; padding:5px; overflow:auto; background:white; resize:none; }
 #outputContent { flex-grow:1; background:transparent; border:none; padding:0; }
 
-#shareModal, #descModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:1000; }
-#modalContent, #descContent { background:white; padding:25px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.2); width:90%; max-width:500px; text-align:center; overflow:auto; max-height:80%; }
+#shareModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:1000; }
+#modalContent { background:white; padding:25px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.2); width:90%; max-width:500px; text-align:center; }
 #shareUrlInput { width:95%; padding:8px; margin:15px 0; border:1px solid #ccc; border-radius:4px; font-size:0.9em; cursor:text; user-select: all; }
 .modal-buttons button { padding:10px 15px; margin:5px; border:none; border-radius:4px; cursor:pointer; font-weight:bold; }
 .modal-buttons button:first-child { background:#007bff; color:white; }
@@ -84,21 +84,11 @@ html, body {
   </div>
 </div>
 
-<div id="descModal" style="display:none;">
-  <div id="descContent">
-    <h3>📖 題目說明</h3>
-    <pre id="descText" style="text-align:left; white-space:pre-wrap;"></pre>
-    <div class="modal-buttons">
-        <button onclick="closeDescModal()">關閉</button>
-    </div>
-  </div>
-</div>
-
 <script>
 let workspace, currentLanguage='zh-hant', isResizing=false, lastBlocklyWidth='0 0 50%';
 const blocklyDiv = document.getElementById('blocklyDiv'), main = document.getElementById('main'), outputContent=document.getElementById('outputContent');
 
-// ====== Blockly 工具箱設定 ======
+// ====== 工具箱設定 ======
 function getToolbox(lang){
   const categories = { 'zh-hant':['邏輯','迴圈','數學','文字','清單','變數','函式'], 'en':['Logic','Loops','Math','Text','Lists','Variables','Functions'] };
   const names = categories[lang]||categories['zh-hant'];
@@ -149,7 +139,7 @@ function loadLanguage(lang){
   const oldScript=document.getElementById('langScript'); if(oldScript) oldScript.remove();
   const script=document.createElement('script');
   script.src=`https://unpkg.com/blockly/msg/${lang}.js`; script.id='langScript';
-  script.onload=()=>{ 
+  script.onload=()=>{
     document.getElementById('langButton').textContent=(lang==='zh-hant')?'切換語言 (English)':'Switch Language (中文)';
     workspace=Blockly.inject('blocklyDiv',{
       toolbox:getToolbox(lang),
@@ -199,7 +189,7 @@ function enableVResize(){
   });
 }
 
-// ====== Blockly 執行/匯入/匯出/分享 ======
+// ====== Blockly 相關功能 ======
 function runCode(){
   outputContent.textContent="執行中...\n";
   const inputLines=document.getElementById('inputContent').value.split('\n').map(l=>l.trimEnd()).filter(l=>l!=="");
@@ -219,38 +209,31 @@ function runCode(){
     outputContent.scrollTop=outputContent.scrollHeight;
   }
 }
-function exportXML(){ if(!workspace)return alert("工作區尚未載入"); let xml=Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(workspace)); const blob=new Blob([xml],{type:"text/xml"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="blockly.xml"; a.click(); URL.revokeObjectURL(a.href); }
-function importXML(){ const input=document.createElement('input'); input.type='file'; input.accept='.xml'; input.onchange=e=>{ const file=e.target.files[0]; if(!file) return; file.text().then(text=>{try{ Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(text),workspace); alert("匯入成功！"); } catch(err){alert("匯入失敗: "+err);} }); }; input.click(); }
-function shareLink(){ if(!workspace) return alert("工作區尚未載入"); const encoded=btoa(Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace))); const url=location.origin+location.pathname+"#xml="+encoded; document.getElementById('shareUrlInput').value=url; document.getElementById('shareModal').style.display='flex'; }
+function exportXML(){
+  if(!workspace)return alert("工作區尚未載入");
+  let xml=Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(workspace));
+  const blob=new Blob([xml],{type:"text/xml"});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="blockly.xml"; a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importXML(){
+  const input=document.createElement('input'); input.type='file'; input.accept='.xml';
+  input.onchange=e=>{
+    const file=e.target.files[0]; if(!file) return;
+    file.text().then(text=>{try{ Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(text),workspace); alert("匯入成功！"); } catch(err){alert("匯入失敗: "+err);} });
+  }; input.click();
+}
+function shareLink(){
+  if(!workspace) return alert("工作區尚未載入");
+  const encoded=btoa(Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace)));
+  const url=location.origin+location.pathname+"#xml="+encoded;
+  document.getElementById('shareUrlInput').value=url;
+  document.getElementById('shareModal').style.display='flex';
+}
 function closeModal(){ document.getElementById('shareModal').style.display='none'; }
-function copyShareUrl(){ const input=document.getElementById('shareUrlInput'); input.select(); input.setSelectionRange(0,99999); try{ navigator.clipboard.writeText(input.value).then(()=>alert("已複製連結")); } catch(e){ document.execCommand('copy'); alert("已複製連結"); } }
-
-// ====== 題目說明 ======
-function showProblemDescription(){
-  document.getElementById('descText').textContent = window.problemDescription || "題目說明無法載入";
-  document.getElementById('descModal').style.display='flex';
-}
-function closeDescModal(){ document.getElementById('descModal').style.display='none'; }
-
-// ====== 從 URL 讀取題目檔案 ======
-function getQueryParam(param){
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(param);
-}
-
-function loadProblemFiles(id){
-  if(!id) return;
-  // input
-  fetch(`set/${id}.in`).then(r=>r.text()).then(text=>{ document.getElementById('inputContent').value=text; }).catch(()=>console.warn('無 input 檔案'));
-  // answer
-  fetch(`set/${id}.out`).then(r=>r.text()).then(text=>{ document.getElementById('ansContent').value=text; }).catch(()=>console.warn('無 output 檔案'));
-  // description
-  fetch(`set/${id}.xml`).then(r=>r.text()).then(text=>{
-    const parser=new DOMParser();
-    const xmlDoc=parser.parseFromString(text,'text/xml');
-    const desc=xmlDoc.getElementsByTagName('description')[0];
-    window.problemDescription = desc ? desc.textContent : '';
-  }).catch(()=>window.problemDescription="無法載入說明");
+function copyShareUrl(){
+  const input=document.getElementById('shareUrlInput'); input.select(); input.setSelectionRange(0,99999);
+  try{ navigator.clipboard.writeText(input.value).then(()=>alert("已複製連結")); } catch(e){ document.execCommand('copy'); alert("已複製連結"); }
 }
 
 // ====== 初始化 ======
@@ -265,12 +248,37 @@ window.onload=()=>{
   const h=(totalH-resH)/panels.length;
   panels.forEach(p=>p.style.height=h+'px');
 
+  // ====== 自動載入題目資料 ======
+const urlParams = new URLSearchParams(window.location.search);
+const problemId = urlParams.get('id');
+if(problemId){
+  // 載入 Input
+  fetch(`set/${problemId}.in`)
+    .then(r=>r.text())
+    .then(txt=>document.getElementById('inputContent').value = txt)
+    .catch(e=>console.warn(`無法讀取 ${problemId}.in`, e));
+  
+  // 載入 Answer
+  fetch(`set/${problemId}.out`)
+    .then(r=>r.text())
+    .then(txt=>document.getElementById('ansContent').value = txt)
+    .catch(e=>console.warn(`無法讀取 ${problemId}.out`, e));
+
+  // 載入題目描述 (可選)
+  fetch(`set/${problemId}.xml`)
+    .then(r=>r.text())
+    .then(str=>(new DOMParser()).parseFromString(str,'text/xml'))
+    .then(xml=>{
+      const name = xml.getElementsByTagName('name')[0]?.textContent || problemId;
+      const desc = xml.getElementsByTagName('desc')[0]?.textContent || '';
+      document.getElementById('toolbar').insertAdjacentHTML('beforeend',
+        `<span style="margin-left:20px; font-weight:bold;">${name}: ${desc}</span>`);
+    })
+    .catch(e=>console.warn(`無法讀取 ${problemId}.xml`, e));
+}
+    
   // 從 URL hash 載入 XML
   if(location.hash.startsWith("#xml=")){ setTimeout(()=>{try{ Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(atob(location.hash.slice(5))),workspace); } catch(e){console.error(e);} },500); }
-
-  // 載入題目
-  const id = getQueryParam('id');
-  loadProblemFiles(id);
 };
 </script>
 </body>
