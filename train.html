@@ -248,9 +248,39 @@ window.onload=()=>{
   const h=(totalH-resH)/panels.length;
   panels.forEach(p=>p.style.height=h+'px');
 
+  // ====== 自動載入題目資料 ======
+const urlParams = new URLSearchParams(window.location.search);
+const problemId = urlParams.get('id');
+if(problemId){
+  // 載入 Input
+  fetch(`set/${problemId}.in`)
+    .then(r=>r.text())
+    .then(txt=>document.getElementById('inputContent').value = txt)
+    .catch(e=>console.warn(`無法讀取 ${problemId}.in`, e));
+  
+  // 載入 Answer
+  fetch(`set/${problemId}.out`)
+    .then(r=>r.text())
+    .then(txt=>document.getElementById('ansContent').value = txt)
+    .catch(e=>console.warn(`無法讀取 ${problemId}.out`, e));
+
+  // 載入題目描述 (可選)
+  fetch(`set/${problemId}.xml`)
+    .then(r=>r.text())
+    .then(str=>(new DOMParser()).parseFromString(str,'text/xml'))
+    .then(xml=>{
+      const name = xml.getElementsByTagName('name')[0]?.textContent || problemId;
+      const desc = xml.getElementsByTagName('desc')[0]?.textContent || '';
+      document.getElementById('toolbar').insertAdjacentHTML('beforeend',
+        `<span style="margin-left:20px; font-weight:bold;">${name}: ${desc}</span>`);
+    })
+    .catch(e=>console.warn(`無法讀取 ${problemId}.xml`, e));
+}
+    
   // 從 URL hash 載入 XML
   if(location.hash.startsWith("#xml=")){ setTimeout(()=>{try{ Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(atob(location.hash.slice(5))),workspace); } catch(e){console.error(e);} },500); }
 };
 </script>
 </body>
 </html>
+
