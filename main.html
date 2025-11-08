@@ -31,7 +31,7 @@ function loadProblemSet() {
             const name = p.getAttribute('name');
             const li = document.createElement('li');
             const a = document.createElement('a');
-            a.href = `test.html?pid=${id}`;  // 點擊後跳到 test.html 並帶上 pid
+            a.href = `train.html?pid=${id}`;  // 點擊後跳到 test.html 並帶上 pid
             a.textContent = `${id} - ${name}`;
             li.appendChild(a);
             plist.appendChild(li);
