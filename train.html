@@ -2,41 +2,203 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Blockly IDE 完整版</title>
+<title>Blockly IDE</title>
 
 <script src="https://unpkg.com/blockly/blockly.min.js"></script>
 <script src="https://unpkg.com/@blockly/blockly/javascript_compressed.js"></script>
 
 <style>
+/* 🎨 CSS 樣式：確保整體佈局 */
 html, body {
-    height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: sans-serif;
+    height: 100%; 
+    margin: 0; 
+    padding: 0; 
+    overflow: hidden; 
+    font-family: sans-serif;
 }
 #toolbar {
-    height: 40px; background: #eee; border-bottom: 1px solid #ccc;
-    display: flex; align-items: center; padding: 0 10px; box-sizing: border-box;
+    height: 40px; 
+    background: #eee; 
+    border-bottom: 1px solid #ccc; 
+    display: flex; 
+    align-items: center; 
+    padding: 0 10px; 
+    box-sizing: border-box;
 }
-#toolbar button { margin-right: 10px; }
+#toolbar button {
+    margin-right: 10px;
+}
 
-#main { display: flex; height: calc(100% - 40px); }
-#blocklyDiv { flex: 0 0 50%; height: 100%; min-width: 100px; max-width: calc(100% - 100px); transition: none; }
-#resizer { width:6px; height:100%; background:#ccc; cursor:col-resize; flex-shrink:0; }
+/* 主容器：左右分割 */
+#main {
+    display: flex; 
+    height: calc(100% - 40px);
+}
 
-#rightPanel { flex:1; display:flex; flex-direction:column; height:100%; min-width:100px; }
-.panel-section { padding:10px; box-sizing:border-box; font-family:monospace; display:flex; flex-direction:column; overflow:hidden; }
-#inputPanel, #ansPanel, #outputPanel { flex-grow:0; flex-shrink:0; border-bottom:1px solid #ccc; background:#f8f8f8; }
-#outputPanel { background:#000; color:#0f0; overflow-y:auto; white-space:pre-wrap; border-bottom:none; }
-.v-resizer { height:6px; width:100%; background:#aaa; cursor:row-resize; flex-shrink:0; }
-.panel-caption { font-size:0.9em; font-weight:bold; margin-bottom:5px; color:#666; text-transform:uppercase; flex-shrink:0; }
-#outputPanel .panel-caption { color:#eee; }
-#inputContent, #ansContent { flex-grow:1; border:1px solid #ddd; padding:5px; overflow:auto; background:white; resize:none; }
-#outputContent { flex-grow:1; background:transparent; border:none; padding:0; }
+/* 左側：Blockly 工作區 */
+#blocklyDiv {
+    flex: 0 0 70%; 
+    height: 100%;
+    min-width: 100px;
+    max-width: calc(100% - 100px); 
+    transition: none;
+}
 
-#shareModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:1000; }
-#modalContent { background:white; padding:25px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.2); width:90%; max-width:500px; text-align:center; }
-#shareUrlInput { width:95%; padding:8px; margin:15px 0; border:1px solid #ccc; border-radius:4px; font-size:0.9em; cursor:text; user-select: all; }
-.modal-buttons button { padding:10px 15px; margin:5px; border:none; border-radius:4px; cursor:pointer; font-weight:bold; }
-.modal-buttons button:first-child { background:#007bff; color:white; }
-.modal-buttons button:last-child { background:#ccc; }
+/* 拖曳分割線 (水平) */
+#resizer {
+    width: 6px;
+    height: 100%;
+    background-color: #ccc;
+    cursor: col-resize;
+    flex-shrink: 0;
+}
+
+/* 右側主容器：上下分割 */
+#rightPanel {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 100px;
+}
+
+/* 右側：上下子視窗的共同樣式 */
+.panel-section {
+    padding: 10px;
+    box-sizing: border-box;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* 上半部：Input (重要：設定 flex-grow 和初始 height) */
+#inputPanel {
+    flex-grow: 0; 
+    flex-shrink: 0;
+    border-bottom: 1px solid #ccc;
+    background-color: #f8f8f8;
+    height: 33%; 
+}
+
+#ansPanel {
+    flex-grow: 0; 
+    flex-shrink: 0;
+    border-bottom: 1px solid #ccc;
+    background-color: #f8f8f8;
+    height: 33%; 
+}
+
+/* 下半部：Output (重要：設定 flex-grow 和初始 height) */
+#outputPanel {
+    flex-grow: 0; 
+    flex-shrink: 0;
+    background-color: #000;
+    color: #0f0; 
+    overflow-y: auto;
+    white-space: pre-wrap;
+    height: calc(33% - 10px);
+}
+
+/* 垂直拖曳分割線樣式 */
+#v-resizer {
+    height: 6px; 
+    width: 100%;
+    background-color: #aaa;
+    cursor: row-resize; 
+    flex-shrink: 0;
+}
+
+/* 標題樣式 */
+.panel-caption {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #666;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+#outputPanel .panel-caption {
+     color: #eee;
+}
+
+/* 實際的輸入/輸出內容區 */
+#inputContent {
+    flex-grow: 1; 
+    border: 1px solid #ddd;
+    padding: 5px;
+    overflow: auto;
+    background-color: white;
+    resize: none; 
+}
+#ansContent {
+    flex-grow: 1; 
+    border: 1px solid #ddd;
+    padding: 5px;
+    overflow: auto;
+    background-color: white;
+    resize: none; 
+}
+
+#outputContent {
+    flex-grow: 1;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* **【Modal 樣式】** */
+#shareModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#modalContent {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+}
+
+#shareUrlInput {
+    width: 95%;
+    padding: 8px;
+    margin: 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9em;
+    cursor: text;
+    user-select: all;
+}
+
+.modal-buttons button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.modal-buttons button:first-child {
+    background-color: #007bff;
+    color: white;
+}
+
+.modal-buttons button:last-child {
+    background-color: #ccc;
+}
 </style>
 </head>
 <body>
@@ -44,215 +206,449 @@ html, body {
 <div id="toolbar">
   <button onclick="exportXML()">匯出 XML</button>
   <button onclick="importXML()">匯入 XML</button>
-  <button onclick="shareLink()">分享</button>
+  <button onclick="shareLink()">分享</button> 
   <button onclick="runCode()">執行程式碼</button>
   <button id="langButton" onclick="switchLanguage()">切換語言 (English)</button>
-  <button onclick="showProblemDescription()">題目說明</button>
+  <button onclick="showDescription()">題目說明</button>
 </div>
 
 <div id="main">
   <div id="blocklyDiv"></div>
   <div id="resizer"></div>
-
+  
   <div id="rightPanel">
     <div id="inputPanel" class="panel-section">
         <div class="panel-caption">Input (每行視為一次輸入):</div>
         <textarea id="inputContent" placeholder="在此輸入程式所需的資料，每行一個值..." rows="5"></textarea>
     </div>
-    <div class="v-resizer"></div>
+    
+    <div id="v-resizer"></div> 
+
     <div id="ansPanel" class="panel-section">
         <div class="panel-caption">Answer (標準答案):</div>
         <textarea id="ansContent" placeholder="" rows="5"></textarea>
     </div>
-    <div class="v-resizer"></div>
+
+
+    <div id="v-resizer"></div> 
+
     <div id="outputPanel" class="panel-section">
         <div class="panel-caption">Output:</div>
         <pre id="outputContent">程式執行結果將顯示在這裡...</pre>
     </div>
   </div>
 </div>
-
-<div id="shareModal" style="display:none;">
-  <div id="modalContent">
-    <h3>🎉 專案分享連結</h3>
-    <p>此連結包含您的 Blockly 專案內容。請注意，直接從本地開啟將無效！</p>
-    <input type="text" id="shareUrlInput" readonly>
-    <div class="modal-buttons">
-        <button onclick="copyShareUrl()">複製連結</button>
-        <button onclick="closeModal()">關閉</button>
+  
+<div id="shareModal" style="display: none;">
+    <div id="modalContent">
+        <h3>🎉 專案分享連結</h3>
+        <p>此連結包含您的 Blockly 專案內容。**請注意：** 若要讓此連結對他人有效，您必須將此 HTML 檔案發佈到網站伺服器 (Server) 上。</p>
+        <input type="text" id="shareUrlInput" readonly>
+        <div class="modal-buttons">
+            <button onclick="copyShareUrl()">複製連結</button>
+            <button onclick="closeModal()">關閉</button>
+        </div>
+        <p style="font-size:0.85em; margin-top:15px; color:#c00;">[本地文件警告] 如果您直接從本地文件（例如 C:\）開啟此檔案，分享連結將會無效！</p>
     </div>
-  </div>
 </div>
 
 <script>
-let workspace, currentLanguage='zh-hant', isResizing=false, lastBlocklyWidth='0 0 50%';
-const blocklyDiv = document.getElementById('blocklyDiv'), main = document.getElementById('main'), outputContent=document.getElementById('outputContent');
+  // **【全域變數】**
+  let workspace;
+  let currentLanguage = 'zh-hant';
+  let isResizing = false;
+  let lastBlocklyWidth = '0 0 70%';
 
-// ====== 工具箱設定 ======
-function getToolbox(lang){
-  const categories = { 'zh-hant':['邏輯','迴圈','數學','文字','清單','變數','函式'], 'en':['Logic','Loops','Math','Text','Lists','Variables','Functions'] };
-  const names = categories[lang]||categories['zh-hant'];
-  return {
-    "kind":"categoryToolbox",
-    "contents":[
-      {"kind":"category","name":names[0],"colour":"210","contents":[
-        {"kind":"block","type":"controls_if"},{"kind":"block","type":"logic_compare"},
-        {"kind":"block","type":"logic_operation"},{"kind":"block","type":"logic_boolean"},
-        {"kind":"block","type":"logic_negate"},{"kind":"block","type":"logic_null"},
-        {"kind":"block","type":"logic_ternary"}]},
-      {"kind":"category","name":names[1],"colour":"120","contents":[
-        {"kind":"block","type":"controls_repeat_ext"},{"kind":"block","type":"controls_whileUntil"},
-        {"kind":"block","type":"controls_for"},{"kind":"block","type":"controls_forEach"},
-        {"kind":"block","type":"controls_flow_statements"}]},
-      {"kind":"category","name":names[2],"colour":"230","contents":[
-        {"kind":"block","type":"math_number"},{"kind":"block","type":"math_arithmetic"},
-        {"kind":"block","type":"math_single"},{"kind":"block","type":"math_trig"},
-        {"kind":"block","type":"math_constant"},{"kind":"block","type":"math_number_property"},
-        {"kind":"block","type":"math_round"},{"kind":"block","type":"math_on_list"},
-        {"kind":"block","type":"math_modulo"},{"kind":"block","type":"math_constrain"},
-        {"kind":"block","type":"math_random_int"},{"kind":"block","type":"math_random_float"},
-        {"kind":"block","type":"math_atan2"}]},
-      {"kind":"category","name":names[3],"colour":"160","contents":[
-        {"kind":"block","type":"text"},{"kind":"block","type":"text_join"},
-        {"kind":"block","type":"text_append"},{"kind":"block","type":"text_length"},
-        {"kind":"block","type":"text_isEmpty"},{"kind":"block","type":"text_indexOf"},
-        {"kind":"block","type":"text_charAt"},{"kind":"block","type":"text_getSubstring"},
-        {"kind":"block","type":"text_changeCase"},{"kind":"block","type":"text_trim"},
-        {"kind":"block","type":"text_print"},{"kind":"block","type":"text_prompt_ext"}]},
-      {"kind":"category","name":names[4],"colour":"300","contents":[
-        {"kind":"block","type":"lists_create_with"},{"kind":"block","type":"lists_repeat"},
-        {"kind":"block","type":"lists_length"},{"kind":"block","type":"lists_isEmpty"},
-        {"kind":"block","type":"lists_indexOf"},{"kind":"block","type":"lists_getIndex"},
-        {"kind":"block","type":"lists_setIndex"},{"kind":"block","type":"lists_getSublist"},
-        {"kind":"block","type":"lists_split"},{"kind":"block","type":"lists_sort"}]},
-      {"kind":"category","name":names[5],"colour":"330","custom":"VARIABLE"},
-      {"kind":"category","name":names[6],"colour":"290","custom":"PROCEDURE"}
-    ]
-  };
-}
+  const langButton = document.getElementById('langButton');
+  const main = document.getElementById('main');
+  const blocklyDiv = document.getElementById('blocklyDiv');
+  const outputContent = document.getElementById('outputContent');
+  const inputContent = document.getElementById('inputContent');
 
-// ====== 語言切換 ======
-function loadLanguage(lang){
-  currentLanguage = lang;
-  let xmlText='';
-  if(workspace){ xmlText = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace)); workspace.dispose(); }
-  const oldScript=document.getElementById('langScript'); if(oldScript) oldScript.remove();
-  const script=document.createElement('script');
-  script.src=`https://unpkg.com/blockly/msg/${lang}.js`; script.id='langScript';
-  script.onload=()=>{
-    document.getElementById('langButton').textContent=(lang==='zh-hant')?'切換語言 (English)':'Switch Language (中文)';
-    workspace=Blockly.inject('blocklyDiv',{
-      toolbox:getToolbox(lang),
-      scrollbars:true, trashcan:true, collapse:true,
-      grid:{spacing:20,length:3,colour:'#ccc',snap:true},
-      locale:lang,
-      zoom:{controls:true,wheel:false,startScale:1,maxScale:3,minScale:0.3,scaleSpeed:1.2}
-    });
-    if(xmlText){ try{ Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xmlText),workspace); } catch(e){console.warn(e);} }
-    Blockly.svgResize(workspace);
-  };
-  document.head.appendChild(script);
-}
-function switchLanguage(){ loadLanguage(currentLanguage==='zh-hant'?'en':'zh-hant'); }
-
-// ====== 左右拖曳 ======
-function enableResize(){
-  const resizer=document.getElementById('resizer');
-  resizer.addEventListener('mousedown',e=>{isResizing=true; document.body.style.userSelect='none'; document.body.style.cursor='col-resize';});
-  document.addEventListener('mousemove',e=>{
-    if(!isResizing) return;
-    let w=e.clientX-main.offsetLeft;
-    const min=100;
-    if(w<min) w=min; else if(main.offsetWidth-w-resizer.offsetWidth<min) w=main.offsetWidth-min-resizer.offsetWidth;
-    blocklyDiv.style.flex='0 0 '+w+'px'; lastBlocklyWidth='0 0 '+w+'px';
-    if(workspace) Blockly.svgResize(workspace);
-  });
-  document.addEventListener('mouseup',e=>{if(isResizing){isResizing=false; document.body.style.userSelect='auto'; document.body.style.cursor='default';}});
-}
-
-// ====== 右側垂直拖曳 ======
-function enableVResize(){
-  const vResizers=document.querySelectorAll('.v-resizer');
-  vResizers.forEach(vResizer=>{
-    let isV=false;
-    const prev=vResizer.previousElementSibling, next=vResizer.nextElementSibling;
-    vResizer.addEventListener('mousedown',e=>{isV=true; document.body.style.userSelect='none'; document.body.style.cursor='row-resize';});
-    document.addEventListener('mousemove',e=>{
-      if(!isV) return;
-      const totalH=prev.offsetHeight+next.offsetHeight+vResizer.offsetHeight;
-      let newH=e.clientY-prev.getBoundingClientRect().top;
-      if(newH<50) newH=50;
-      if(totalH-newH-vResizer.offsetHeight<50) newH=totalH-50-vResizer.offsetHeight;
-      prev.style.height=newH+'px'; next.style.height=(totalH-newH-vResizer.offsetHeight)+'px';
-    });
-    document.addEventListener('mouseup',e=>{if(isV){isV=false; document.body.style.userSelect='auto'; document.body.style.cursor='default';}});
-  });
-}
-
-// ====== Blockly 相關功能 ======
-function runCode(){
-  outputContent.textContent="執行中...\n";
-  const inputLines=document.getElementById('inputContent').value.split('\n').map(l=>l.trimEnd()).filter(l=>l!=="");
-  let idx=0;
-  const start=performance.now();
-  const customAlert=msg=>{outputContent.textContent+=msg+'\n'; outputContent.scrollTop=outputContent.scrollHeight;};
-  const customPrompt=(msg,def)=>{
-    if(idx<inputLines.length){ const v=inputLines[idx]; idx++; return v; }
-    outputContent.textContent+=`[Input exhausted, using default/null: ${def}]\n`; outputContent.scrollTop=outputContent.scrollHeight; return def??null;
-  };
-  const origAlert=window.alert, origPrompt=window.prompt;
-  window.alert=customAlert; window.prompt=customPrompt;
-  try{ eval(Blockly.JavaScript.workspaceToCode(workspace)); outputContent.textContent+="\n--- 程式執行完畢 ---"; }
-  catch(e){ outputContent.textContent+="\n\n!!! 程式執行錯誤:\n"+e; }
-  finally{ window.alert=origAlert; window.prompt=origPrompt;
-    const end=performance.now(); outputContent.textContent+=`\n⏱ 執行時間：${((end-start)/1000).toFixed(4)} 秒`;
-    outputContent.scrollTop=outputContent.scrollHeight;
+  // **XML 兼容性修復** (保持不變)
+  if (Blockly.utils && Blockly.utils.xml) {
+    Blockly.Xml = {
+      domToText: Blockly.utils.xml.domToText,
+      domToPrettyText: Blockly.utils.xml.domToPrettyText,
+      textToDom: Blockly.utils.xml.textToDom,
+      domToWorkspace: Blockly.Xml.domToWorkspace,
+      workspaceToDom: Blockly.Xml.workspaceToDom
+    };
   }
-}
-function exportXML(){
-  if(!workspace)return alert("工作區尚未載入");
-  let xml=Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(workspace));
-  const blob=new Blob([xml],{type:"text/xml"});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="blockly.xml"; a.click();
-  URL.revokeObjectURL(a.href);
-}
-function importXML(){
-  const input=document.createElement('input'); input.type='file'; input.accept='.xml';
-  input.onchange=e=>{
-    const file=e.target.files[0]; if(!file) return;
-    file.text().then(text=>{try{ Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(text),workspace); alert("匯入成功！"); } catch(err){alert("匯入失敗: "+err);} });
-  }; input.click();
-}
-function shareLink(){
-  if(!workspace) return alert("工作區尚未載入");
-  const encoded=btoa(Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace)));
-  const url=location.origin+location.pathname+"#xml="+encoded;
-  document.getElementById('shareUrlInput').value=url;
-  document.getElementById('shareModal').style.display='flex';
-}
-function closeModal(){ document.getElementById('shareModal').style.display='none'; }
-function copyShareUrl(){
-  const input=document.getElementById('shareUrlInput'); input.select(); input.setSelectionRange(0,99999);
-  try{ navigator.clipboard.writeText(input.value).then(()=>alert("已複製連結")); } catch(e){ document.execCommand('copy'); alert("已複製連結"); }
-}
+  
+  // **工具箱定義 (加入顏色屬性)**
+  function getToolbox(lang) {
+    const categories = {
+      'zh-hant': ['邏輯', '迴圈', '數學', '文字', '清單', '變數', '函式'],
+      'en': ['Logic', 'Loops', 'Math', 'Text', 'Lists', 'Variables', 'Functions']
+    };
+    
+    const langNames = categories[lang] || categories['zh-hant'];
 
-// ====== 初始化 ======
-window.onload=()=>{
-  enableResize(); enableVResize(); loadLanguage('zh-hant'); blocklyDiv.style.flex=lastBlocklyWidth;
+    return {
+      "kind": "categoryToolbox",
+      "contents": [
+        {"kind": "category", "name": langNames[0], "colour": "210", "contents": [ /* 邏輯 (藍) */
+          {"kind":"block","type":"controls_if"}, {"kind":"block","type":"logic_compare"},
+          {"kind":"block","type":"logic_operation"}, {"kind":"block","type":"logic_boolean"},
+          {"kind":"block","type":"logic_negate"}, {"kind":"block","type":"logic_null"},
+          {"kind":"block","type":"logic_ternary"}
+        ]},
+        {"kind": "category", "name": langNames[1], "colour": "120", "contents": [ /* 迴圈 (綠) */
+          {"kind":"block","type":"controls_repeat_ext"}, {"kind":"block","type":"controls_whileUntil"},
+          {"kind":"block","type":"controls_for"}, {"kind":"block","type":"controls_forEach"},
+          {"kind":"block","type":"controls_flow_statements"}
+        ]},
+        {"kind": "category", "name": langNames[2], "colour": "230", "contents": [ /* 數學 (深藍) */
+          {"kind":"block","type":"math_number"}, {"kind":"block","type":"math_arithmetic"},
+          {"kind":"block","type":"math_single"}, {"kind":"block","type":"math_trig"},
+          {"kind":"block","type":"math_constant"}, {"kind":"block","type":"math_number_property"},
+          {"kind":"block","type":"math_round"}, {"kind":"block","type":"math_on_list"},
+          {"kind":"block","type":"math_modulo"}, {"kind":"block","type":"math_constrain"},
+          {"kind":"block","type":"math_random_int"}, {"kind":"block","type":"math_random_float"},
+          {"kind":"block","type":"math_atan2"}
+        ]},
+        {"kind": "category", "name": langNames[3], "colour": "160", "contents": [ /* 文字 (青) */
+          {"kind":"block","type":"text"}, {"kind":"block","type":"text_join"},
+          {"kind":"block","type":"text_append"}, {"kind":"block","type":"text_length"},
+          {"kind":"block","type":"text_isEmpty"}, {"kind":"block","type":"text_indexOf"},
+          {"kind":"block","type":"text_charAt"}, {"kind":"block","type":"text_getSubstring"},
+          {"kind":"block","type":"text_changeCase"}, {"kind":"block","type":"text_trim"},
+          {"kind":"block","type":"text_print"}, 
+          {"kind":"block","type":"text_prompt_ext"}
+        ]},
+        {"kind": "category", "name": langNames[4], "colour": "300", "contents": [ /* 清單 (紫) */
+          {"kind":"block","type":"lists_create_with"}, {"kind":"block","type":"lists_repeat"},
+          {"kind":"block","type":"lists_length"}, {"kind":"block","type":"lists_isEmpty"},
+          {"kind":"block","type":"lists_indexOf"}, {"kind":"block","type":"lists_getIndex"},
+          {"kind":"block","type":"lists_setIndex"}, {"kind":"block","type":"lists_getSublist"},
+          {"kind":"block","type":"lists_split"}, {"kind":"block","type":"lists_sort"}
+        ]},
+        {"kind": "category", "name": langNames[5], "colour": "330", "custom": "VARIABLE"}, /* 變數 (紅) */
+        {"kind": "category", "name": langNames[6], "colour": "290", "custom": "PROCEDURE"} /* 函式 (深紫) */
+      ]
+    };
+  }
 
-  // 自動平分右側三面板高度
-  const rightPanel=document.getElementById('rightPanel');
-  const panels=[document.getElementById('inputPanel'),document.getElementById('ansPanel'),document.getElementById('outputPanel')];
-  const totalH=rightPanel.clientHeight;
-  const resH=document.querySelectorAll('.v-resizer').length*6;
-  const h=(totalH-resH)/panels.length;
-  panels.forEach(p=>p.style.height=h+'px');
+  // **載入語言/工作區 (已更新 Zoom 配置)**
+  function loadLanguage(languageCode) {
+    currentLanguage = languageCode;
+    let xmlText = '';
+    
+    if (workspace) {
+        const xml = Blockly.Xml.workspaceToDom(workspace);
+        xmlText = Blockly.Xml.domToText(xml);
+        workspace.dispose();
+    }
+    
+    const oldScript = document.getElementById('langScript');
+    if (oldScript) oldScript.remove();
+    
+    const script = document.createElement('script');
+    script.src = `https://unpkg.com/blockly/msg/${languageCode}.js`;
+    script.id = 'langScript';
+    
+    script.onload = () => {
+        if (languageCode === 'zh-hant') {
+            langButton.textContent = '切換語言 (English)';
+        } else {
+            langButton.textContent = 'Switch Language (中文)';
+        }
+        
+        const toolbox = getToolbox(languageCode);
+        const injectConfig = {
+            toolbox: toolbox,
+            scrollbars: true,
+            trashcan: true,
+            collapse: true,
+            grid: {spacing: 20, length: 3, colour: '#ccc', snap: true},
+            locale: languageCode,
+            
+            // **【新增】放大縮小配置**
+            zoom: {
+                controls: true, // 顯示右下角的放大/縮小/適應視窗按鈕
+                wheel: false,    // 啟用滑鼠滾輪縮放
+                startScale: 1.0, 
+                maxScale: 3,
+                minScale: 0.3,
+                scaleSpeed: 1.2
+            }
+        };
+        workspace = Blockly.inject('blocklyDiv', injectConfig);
+        
+        if (xmlText) {
+            try {
+                const dom = Blockly.Xml.textToDom(xmlText);
+                Blockly.Xml.domToWorkspace(dom, workspace);
+            } catch(e) {
+                console.warn("無法恢復工作區 XML:", e);
+            }
+        }
+        
+        Blockly.svgResize(workspace);
+    };
+    
+    document.head.appendChild(script);
+  }
 
-  // 從 URL hash 載入 XML
-  if(location.hash.startsWith("#xml=")){ setTimeout(()=>{try{ Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(atob(location.hash.slice(5))),workspace); } catch(e){console.error(e);} },500); }
-};
+  // **切換語言函數**
+  function switchLanguage() {
+    const targetLang = currentLanguage === 'zh-hant' ? 'en' : 'zh-hant';
+    loadLanguage(targetLang);
+  }
+
+  // **拖曳分割線邏輯 (水平：Blockly 和 I/O)**
+  function enableResize() {
+    const resizer = document.getElementById('resizer');
+    
+    resizer.addEventListener('mousedown', function(e) {
+      isResizing = true;
+      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'col-resize';
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (!isResizing) return;
+
+      const totalWidth = main.offsetWidth;
+      let newBlocklyWidth = e.clientX - main.offsetLeft; 
+      
+      const minWidth = 100;
+      if (newBlocklyWidth < minWidth) {
+          newBlocklyWidth = minWidth;
+      } else if (totalWidth - newBlocklyWidth - resizer.offsetWidth < minWidth) {
+          newBlocklyWidth = totalWidth - minWidth - resizer.offsetWidth;
+      }
+
+      const newFlexValue = '0 0 ' + newBlocklyWidth + 'px';
+      blocklyDiv.style.flex = newFlexValue;
+      lastBlocklyWidth = newFlexValue;
+      
+      Blockly.svgResize(workspace);
+    });
+
+    document.addEventListener('mouseup', function() {
+      if (isResizing) {
+        isResizing = false;
+        document.body.style.userSelect = 'auto';
+        document.body.style.cursor = 'default';
+      }
+    });
+  }
+
+  // **垂直拖曳分割線邏輯 (Input 和 Output)**
+  function enableVResize() {
+    const vResizer = document.getElementById('v-resizer');
+    const rightPanel = document.getElementById('rightPanel');
+    const inputPanel = document.getElementById('inputPanel');
+    const outputPanel = document.getElementById('outputPanel');
+    let isVResizing = false;
+
+    vResizer.addEventListener('mousedown', function(e) {
+      isVResizing = true;
+      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'row-resize';
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (!isVResizing) return;
+
+      const rightPanelRect = rightPanel.getBoundingClientRect();
+      let newInputHeight = e.clientY - rightPanelRect.top;
+      
+      const minHeight = 50;
+
+      if (newInputHeight < minHeight) {
+          newInputHeight = minHeight;
+      } else if (rightPanelRect.height - newInputHeight - vResizer.offsetHeight < minHeight) {
+          newInputHeight = rightPanelRect.height - minHeight - vResizer.offsetHeight;
+      }
+
+      inputPanel.style.height = newInputHeight + 'px';
+      outputPanel.style.height = (rightPanelRect.height - newInputHeight - vResizer.offsetHeight) + 'px';
+    });
+
+    document.addEventListener('mouseup', function() {
+      if (isVResizing) {
+        isVResizing = false;
+        document.body.style.userSelect = 'auto';
+        document.body.style.cursor = 'default';
+      }
+    });
+  }
+
+
+  // **執行程式碼：實現 Readline 和 Print** (保持不變)
+  function runCode(){
+    outputContent.textContent = "執行中...\n";
+    
+    let inputLines = inputContent.value.split('\n')
+                                     .map(line => line.trimEnd())
+                                     .filter(line => line !== "");
+    let inputIndex = 0;
+    const startTime = performance.now(); // ✅ 開始計時
+    const customAlert = (message) => {
+        outputContent.textContent += (String(message) + '\n');
+        outputContent.scrollTop = outputContent.scrollHeight;
+    };
+
+    const customPrompt = (message, defaultValue) => {
+        //outputContent.textContent += `[Input Request]: ${message || "請輸入值"}\n`;
+
+        if (inputIndex < inputLines.length) {
+            const input = inputLines[inputIndex];
+            inputIndex++;
+            //outputContent.textContent += `[Input Used]: "${input}"\n`;
+            //outputContent.scrollTop = outputContent.scrollHeight;
+            return input;
+        } else {
+            const finalValue = (defaultValue === undefined) ? null : defaultValue;
+            outputContent.textContent += `[Input exhausted, using default/null: ${finalValue}]\n`;
+            outputContent.scrollTop = outputContent.scrollHeight;
+            return finalValue; 
+        }
+    };
+    
+    const originalAlert = window.alert;
+    const originalPrompt = window.prompt;
+    window.alert = customAlert;
+    window.prompt = customPrompt;
+
+    try{
+        const code = Blockly.JavaScript.workspaceToCode(workspace);
+        eval(code); 
+        outputContent.textContent += "\n--- 程式執行完畢 ---";
+    }
+    catch(e){
+        outputContent.textContent += "\n\n!!! 程式執行錯誤:\n" + e;
+    }
+    finally {
+        window.alert = originalAlert;
+        window.prompt = originalPrompt;
+        
+        const endTime = performance.now(); // ✅ 結束時間
+        const elapsed = ((endTime - startTime) / 1000).toFixed(4);
+        outputContent.textContent += `⏱ 執行時間：${elapsed} 秒`;
+        
+         
+        outputContent.scrollTop = outputContent.scrollHeight;
+    }
+  }
+  
+  // **Modal 相關函數** (保持不變)
+  function openModal(url) {
+      document.getElementById('shareUrlInput').value = url;
+      document.getElementById('shareModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+      document.getElementById('shareUrlInput').value = '';
+      document.getElementById('shareModal').style.display = 'none';
+  }
+
+  function copyShareUrl() {
+      const urlInput = document.getElementById('shareUrlInput');
+      urlInput.select();
+      urlInput.setSelectionRange(0, 99999);
+      
+      try {
+          navigator.clipboard.writeText(urlInput.value)
+              .then(() => {
+                  alert("連結已複製到剪貼簿！");
+              })
+              .catch(err => {
+                  console.error("複製到剪貼簿失敗:", err);
+                  alert("複製失敗，請手動選取並複製視窗中的連結。");
+              });
+      } catch (err) {
+          document.execCommand('copy');
+          alert("連結已複製到剪貼簿！");
+      }
+  }
+  
+  // **分享連結** (保持不變)
+  function shareLink(){
+    if (!workspace) return alert("工作區尚未載入，無法分享。");
+    
+    const xml = Blockly.Xml.workspaceToDom(workspace);
+    const text = Blockly.Xml.domToText(xml);
+    
+    const encoded = btoa(text);
+    const url = location.origin + location.pathname + "#xml=" + encoded;
+    
+    openModal(url);
+  }
+
+  // 匯出 XML (保持不變)
+  function exportXML(){
+    if (!workspace) return alert("工作區尚未載入。");
+    const xmlDom = Blockly.Xml.workspaceToDom(workspace);
+    const serializer = new XMLSerializer();
+    let xmlText = serializer.serializeToString(xmlDom);
+    if (xmlText.length > 0 && Blockly.Xml && Blockly.Xml.domToPrettyText) {
+        try { xmlText = Blockly.Xml.domToPrettyText(xmlDom); } 
+        catch(e) { console.warn("使用 domToPrettyText 失敗:", e); }
+    }
+    const blob = new Blob([xmlText],{type:"text/xml"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "blockly.xml";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // 匯入 XML (保持不變)
+  function importXML() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".xml";
+    input.onchange = e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      file.text().then(text => {
+        try {
+          const dom = Blockly.Xml.textToDom(text);
+          workspace.clear();
+          Blockly.Xml.domToWorkspace(dom, workspace);
+          alert("匯入成功！");
+        } catch(err) {
+          console.error(err);
+          alert("匯入失敗：XML 無效\n" + err);
+        }
+      }).catch(err => {
+        console.error(err);
+        alert("讀取檔案失敗：" + err);
+      });
+    };
+    input.click();
+  }
+  
+  function showDescription(){
+
+  }
+  
+  // 初始載入
+  window.onload = ()=>{
+    enableResize();  // 啟用左右寬度拖曳
+    enableVResize(); // 啟用垂直高度拖曳
+    loadLanguage('zh-hant');
+
+    blocklyDiv.style.flex = lastBlocklyWidth;
+
+    // 從 URL hash 載入 XML
+    if(location.hash.startsWith("#xml=")){
+      setTimeout(() => {
+        if (!workspace) return;
+        const encoded = location.hash.slice(5);
+        try{
+          const xmlText = atob(encoded);
+          const dom = Blockly.Xml.textToDom(xmlText);
+          Blockly.Xml.domToWorkspace(dom, workspace);
+        } catch(err){console.error("URL XML 無效");}
+      }, 500);
+    }
+  };
 </script>
+
 </body>
 </html>
-
-
