@@ -1,47 +1,46 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html>
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <title>題目列表</title>
 <style>
-body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
-h2 { color: #333; }
-ul { list-style: none; padding: 0; }
-li { margin: 8px 0; padding: 5px 10px; background: #fff; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-li a { text-decoration: none; color: #007bff; }
-li a:hover { text-decoration: underline; }
+  body { font-family: sans-serif; margin: 20px; }
+  h1 { margin-bottom: 10px; }
+  ul { list-style: none; padding: 0; }
+  li { margin: 5px 0; }
+  a { text-decoration: none; color: #007bff; }
+  a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 
-<h2>題目列表</h2>
-<ul id="plist"></ul>
+<h1>題目列表</h1>
+<ul id="problemList">
+  <!-- 題目列表會由 JS 填入 -->
+</ul>
 
 <script>
-// 讀取 problemset.xml 並生成超連結列表
-function loadProblemSet() {
-    fetch('problemset.xml')
-    .then(resp => resp.text())
-    .then(str => (new window.DOMParser()).parseFromString(str,"text/xml"))
-    .then(xml => {
-        const plist = document.getElementById('plist');
-        plist.innerHTML = '';
-        xml.querySelectorAll('problem').forEach(p => {
-            const id = p.getAttribute('id');
-            const name = p.getAttribute('name');
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `train.html?pid=${id}`;  // 點擊後跳到 test.html 並帶上 pid
-            a.textContent = `${id} - ${name}`;
-            li.appendChild(a);
-            plist.appendChild(li);
-        });
-    })
-    .catch(err => console.error("載入題目清單失敗:", err));
-}
+  // 讀 problemset.xml
+  fetch('problemset.xml')
+    .then(response => response.text())
+    .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+    .then(data => {
+      const problems = data.getElementsByTagName('problem');
+      const list = document.getElementById('problemList');
+      for(let i=0; i<problems.length; i++){
+        const id = problems[i].getElementsByTagName('id')[0].textContent;
+        const name = problems[i].getElementsByTagName('name')[0].textContent;
 
-// 初始化
-window.onload = loadProblemSet;
+        // 建立超連結
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.textContent = `${id} - ${name}`;
+        a.href = `test.html?input=set/${id}.in&answer=set/${id}.out`;
+        li.appendChild(a);
+        list.appendChild(li);
+      }
+    })
+    .catch(err => console.error("讀取 XML 失敗:", err));
 </script>
 
 </body>
