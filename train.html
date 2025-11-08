@@ -632,8 +632,26 @@ html, body {
     input.click();
   }
   
-  function showDescription() { const xmlPath = set/${currentId}.xml; fetch(xmlPath) .then(r => r.text()) .then(str => (new DOMParser()).parseFromString(str, "text/xml")) .then(xml => { const title = xml.getElementsByTagName("title")[0]?.textContent || "（無標題）"; const desc = xml.getElementsByTagName("description")[0]?.textContent || "（無說明）"; document.getElementById("descTitle").innerText = title; document.getElementById("descText").innerText = desc; document.getElementById("descModal").style.display = "block"; }) .catch(err => { console.error(err); alert("讀取題目說明失敗！"); }); }
-    
+  function showDescription() {
+    const xmlPath = `set/${currentId}.xml`;
+
+    fetch(xmlPath)
+        .then(r => r.text())
+        .then(str => (new DOMParser()).parseFromString(str, "text/xml"))
+        .then(xml => {
+            const title = xml.getElementsByTagName("title")[0]?.textContent || "（無標題）";
+            const desc  = xml.getElementsByTagName("description")[0]?.textContent || "（無說明）";
+
+            document.getElementById("descTitle").innerText = title;
+            document.getElementById("descText").innerText = desc;
+
+            document.getElementById("descModal").style.display = "block";
+        })
+        .catch(err => {
+            console.error(err);
+            alert("讀取題目說明失敗！");
+        });
+}
   function closeDescModal() {
     document.getElementById("descModal").style.display = "none";
   }
@@ -701,6 +719,7 @@ html, body {
 </body>
 
 </html>
+
 
 
 
