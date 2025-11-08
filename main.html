@@ -4,45 +4,44 @@
 <meta charset="UTF-8">
 <title>題目列表</title>
 <style>
-body { font-family: sans-serif; margin: 20px; }
-h1 { margin-bottom: 10px; }
+body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+h2 { color: #333; }
 ul { list-style: none; padding: 0; }
-li { margin: 5px 0; padding: 5px; border-bottom: 1px solid #ccc; }
+li { margin: 8px 0; }
+a { text-decoration: none; color: #007bff; }
+a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 
-<h1>題目列表</h1>
-<ul id="problemList"></ul>
+<h2>題目列表</h2>
+<ul id="plist"></ul>
 
 <script>
-async function loadProblemSet() {
-  try {
-    const resp = await fetch('problemset.xml');
-    const xmlText = await resp.text();
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-    const problems = xmlDoc.getElementsByTagName("problem");
-    
-    const ul = document.getElementById('problemList');
-    ul.innerHTML = '';
-    
-    for(let p of problems){
-      const id = p.getElementsByTagName("id")[0].textContent;
-      const name = p.getElementsByTagName("name")[0].textContent;
-      
-      const li = document.createElement('li');
-      li.textContent = `${id} - ${name}`;
-      ul.appendChild(li);
-    }
-  } catch(e) {
-    console.error("讀取 problemset.xml 失敗:", e);
-    document.getElementById('problemList').textContent = "無法讀取題目列表";
-  }
+// 讀取 problemset.xml 並生成列表
+function loadProblemSet() {
+    fetch('problemset.xml')
+    .then(resp => resp.text())
+    .then(str => (new window.DOMParser()).parseFromString(str,"text/xml"))
+    .then(xml => {
+        const plist = document.getElementById('plist');
+        plist.innerHTML = '';
+        xml.querySelectorAll('problem').forEach(p => {
+            const id = p.getAttribute('id');
+            const name = p.getAttribute('name');
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `test.html?id=${id}`;
+            a.textContent = `${name} (${id})`;
+            li.appendChild(a);
+            plist.appendChild(li);
+        });
+    })
+    .catch(err => console.error("載入題目清單失敗:", err));
 }
 
-// 初始載入
-loadProblemSet();
+// 初始化
+window.onload = loadProblemSet;
 </script>
 
 </body>
