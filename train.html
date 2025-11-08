@@ -254,6 +254,7 @@ html, body {
 
 <script>
   // **【全域變數】**
+  let currentId = null;
   let workspace;
   let currentLanguage = 'zh-hant';
   let isResizing = false;
@@ -666,7 +667,12 @@ html, body {
     loadLanguage('zh-hant');
 
     blocklyDiv.style.flex = lastBlocklyWidth;
-    loadIOFromId();
+    const params = new URLSearchParams(window.location.search);
+    currentId = params.get("id") || null;
+
+    // 🚀 自動載入 Input/Answer
+    if(currentId) loadIOFromId();
+      
     // 從 URL hash 載入 XML
     if(location.hash.startsWith("#xml=")){
       setTimeout(() => {
@@ -685,3 +691,4 @@ html, body {
 </body>
 
 </html>
+
