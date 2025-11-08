@@ -252,6 +252,14 @@ html, body {
     </div>
 </div>
 
+<div id="descModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h2 id="descTitle"></h2>
+        <pre id="descText" style="white-space:pre-wrap;"></pre>
+        <button onclick="closeDescModal()">關閉</button>
+    </div>
+</div>
+    
 <script>
   // **【全域變數】**
   let currentId = null;
@@ -624,8 +632,29 @@ html, body {
     input.click();
   }
   
-  function showDescription(){
+  function showDescription() {
+    const xmlPath = `set/${problemId}.xml`;
 
+    fetch(xmlPath)
+        .then(r => r.text())
+        .then(str => (new DOMParser()).parseFromString(str, "text/xml"))
+        .then(xml => {
+            const title = xml.getElementsByTagName("title")[0]?.textContent || "（無標題）";
+            const desc  = xml.getElementsByTagName("description")[0]?.textContent || "（無說明）";
+
+            document.getElementById("descTitle").innerText = title;
+            document.getElementById("descText").innerText = desc;
+
+            document.getElementById("descModal").style.display = "block";
+        })
+        .catch(err => {
+            console.error(err);
+            alert("讀取題目說明失敗！");
+        });
+  }
+    
+  function closeDescModal() {
+    document.getElementById("descModal").style.display = "none";
   }
 
   function loadIOFromId() {
@@ -691,4 +720,5 @@ html, body {
 </body>
 
 </html>
+
 
