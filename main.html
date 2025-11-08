@@ -2,169 +2,48 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<title>Blockly 題庫系統</title>
-
-<script src="https://unpkg.com/blockly/blockly.min.js"></script>
-<script src="https://unpkg.com/@blockly/blockly/javascript_compressed.js"></script>
-
+<title>題目列表</title>
 <style>
-body { margin:0; font-family:sans-serif; }
-#toolbar { padding:5px; background:#eee; border-bottom:1px solid #ccc; }
-#toolbar select, #toolbar button { margin-right:10px; }
-
-#main { display:flex; height:calc(100vh - 40px); }
-#blocklyDiv { flex:0 0 50%; height:100%; border-right:1px solid #ccc; }
-#rightPanel { flex:1; display:flex; flex-direction:column; }
-.panel { flex:1; padding:5px; box-sizing:border-box; display:flex; flex-direction:column; }
-textarea { flex:1; width:100%; resize:none; font-family:monospace; padding:5px; }
-#outputContent { flex:1; background:#000; color:#0f0; padding:5px; overflow:auto; white-space:pre-wrap; }
+body { font-family: sans-serif; margin: 20px; }
+h1 { margin-bottom: 10px; }
+ul { list-style: none; padding: 0; }
+li { margin: 5px 0; padding: 5px; border-bottom: 1px solid #ccc; }
 </style>
 </head>
 <body>
 
-<div id="toolbar">
-  題目列表：
-  <select id="problemSelect"></select>
-  <button onclick="runCode()">執行程式碼</button>
-</div>
-
-<div id="main">
-  <div id="blocklyDiv"></div>
-  <div id="rightPanel">
-    <div class="panel">
-      <strong>Input:</strong>
-      <textarea id="inputContent"></textarea>
-    </div>
-    <div class="panel">
-      <strong>Answer:</strong>
-      <textarea id="ansContent"></textarea>
-    </div>
-    <div class="panel">
-      <strong>Output:</strong>
-      <pre id="outputContent">程式執行結果會在這裡顯示</pre>
-    </div>
-  </div>
-</div>
+<h1>題目列表</h1>
+<ul id="problemList"></ul>
 
 <script>
-let workspace;
-const problemSelect = document.getElementById('problemSelect');
-const inputContent = document.getElementById('inputContent');
-const ansContent = document.getElementById('ansContent');
-const outputContent = document.getElementById('outputContent');
-
-// Blockly 初始化
-function initBlockly() {
-  workspace = Blockly.inject('blocklyDiv', {
-    toolbox: {
-      "kind": "categoryToolbox",
-      "contents": [
-        {"kind":"category","name":"Logic","colour":"210","contents":[
-          {"kind":"block","type":"controls_if"},{"kind":"block","type":"logic_compare"},
-          {"kind":"block","type":"logic_operation"},{"kind":"block","type":"logic_boolean"}
-        ]},
-        {"kind":"category","name":"Loops","colour":"120","contents":[
-          {"kind":"block","type":"controls_repeat_ext"},{"kind":"block","type":"controls_whileUntil"}
-        ]},
-        {"kind":"category","name":"Math","colour":"230","contents":[
-          {"kind":"block","type":"math_number"},{"kind":"block","type":"math_arithmetic"}
-        ]},
-        {"kind":"category","name":"Text","colour":"160","contents":[
-          {"kind":"block","type":"text"},{"kind":"block","type":"text_print"}
-        ]}
-      ]
-    },
-    scrollbars:true,
-    trashcan:true
-  });
-}
-
-// 讀取 problemset.xml
 async function loadProblemSet() {
-  const resp = await fetch('problemset.xml');
-  const xmlText = await resp.text();
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-  const problems = xmlDoc.getElementsByTagName("problem");
-  
-  problemSelect.innerHTML = "";
-  for(let p of problems){
-    const id = p.getElementsByTagName("id")[0].textContent;
-    const name = p.getElementsByTagName("name")[0].textContent;
-    const option = document.createElement("option");
-    option.value = id;
-    option.textContent = `${id} - ${name}`;
-    problemSelect.appendChild(option);
-  }
-}
-
-// 選擇題目後載入對應 XML / Input / Answer
-async function loadProblem(id) {
-  // 載入 Blockly XML
   try {
-    const respXml = await fetch(`set/${id}.xml`);
-    const xmlText = await respXml.text();
-    const xmlDom = Blockly.Xml.textToDom(xmlText);
-    workspace.clear();
-    Blockly.Xml.domToWorkspace(xmlDom, workspace);
+    const resp = await fetch('problemset.xml');
+    const xmlText = await resp.text();
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+    const problems = xmlDoc.getElementsByTagName("problem");
+    
+    const ul = document.getElementById('problemList');
+    ul.innerHTML = '';
+    
+    for(let p of problems){
+      const id = p.getElementsByTagName("id")[0].textContent;
+      const name = p.getElementsByTagName("name")[0].textContent;
+      
+      const li = document.createElement('li');
+      li.textContent = `${id} - ${name}`;
+      ul.appendChild(li);
+    }
   } catch(e) {
-    console.warn("無法載入 Blockly XML", e);
-    workspace.clear();
-  }
-
-  // 載入 Input
-  try {
-    const respIn = await fetch(`set/${id}.in`);
-    inputContent.value = await respIn.text();
-  } catch(e) { inputContent.value = ""; }
-
-  // 載入 Answer
-  try {
-    const respOut = await fetch(`set/${id}.out`);
-    ansContent.value = await respOut.text();
-  } catch(e) { ansContent.value = ""; }
-
-  outputContent.textContent = "程式執行結果會在這裡顯示";
-}
-
-// 執行 Blockly 程式碼
-function runCode() {
-  outputContent.textContent = "";
-  let lines = inputContent.value.split("\n").map(l=>l.trim()).filter(l=>l!=="");
-  let index = 0;
-  
-  const inputFunc = () => {
-    if(index < lines.length) return lines[index++];
-    return null;
-  };
-  const printFunc = msg => {
-    outputContent.textContent += msg + "\n";
-  };
-
-  const code = Blockly.JavaScript.workspaceToCode(workspace);
-  try{
-    eval(`
-      const readline = ${inputFunc.toString()};
-      const print = ${printFunc.toString()};
-      ${code}
-    `);
-  } catch(e) {
-    outputContent.textContent += "\n錯誤: " + e;
+    console.error("讀取 problemset.xml 失敗:", e);
+    document.getElementById('problemList').textContent = "無法讀取題目列表";
   }
 }
-
-// 監聽選單
-problemSelect.addEventListener('change', e => {
-  loadProblem(e.target.value);
-});
 
 // 初始載入
-initBlockly();
-loadProblemSet().then(()=> {
-  if(problemSelect.options.length>0){
-    loadProblem(problemSelect.options[0].value);
-  }
-});
+loadProblemSet();
 </script>
+
 </body>
 </html>
