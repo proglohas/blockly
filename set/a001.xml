@@ -3,11 +3,11 @@
     <title>A001: Hello World</title>
     <description>
     <![CDATA[
-    說明:
-    題目第一列有一個數字 n, 接著有 n 列文字。
-    讀入指定的字串，並且輸出指定的字串。
-    例如輸入：world
-    請輸出：hello, world
+        說明:
+        題目第一列有一個數字 n, 接著有 n 列文字。
+        讀入指定的字串，並且輸出指定的字串。
+        例如輸入：world
+        請輸出：hello, world
 ]]>
     </description>
 </problem>
