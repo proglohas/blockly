@@ -609,7 +609,7 @@ function runCode(){
         const elapsed = ((endTime - startTime) / 1000).toFixed(4);
 
         // ✅ 這次會有 output 了
-        judgeOutput(collectedOutput, answerContent.value);
+        judgeOutput(collectedOutput, ansContent.value);
 
         outputContent.textContent += `⏱ 執行時間：${elapsed} 秒\n`;
     }
@@ -839,6 +839,7 @@ function closeDescModal() {
 </body>
 
 </html>
+
 
 
 
