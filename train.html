@@ -281,7 +281,7 @@ html, body {
     </div>
 </div>
 
-<div id="descModal" class="modal" style="display:none;">
+<div id="descModal"  style="display:none;">
     <div class="modal-content" style="white-space: pre-wrap; overflow: auto; max-height: 80vh;">
         <h2 id="descTitle" style="margin-bottom:10px;"></h2>
         <pre id="descText" style="white-space: pre-wrap;"></pre>
@@ -699,7 +699,7 @@ html, body {
             const title = titleNode ? titleNode.textContent.trim() : "（無標題）";
             const desc  = descNode ? descNode.textContent.trim() : "（無說明）";
 
-            outputContent.textContent += `標題: ${title}\n說明:\n${desc}\n`;
+            //outputContent.textContent += `標題: ${title}\n說明:\n${desc}\n`;
 
             // 顯示 descModal
             document.getElementById("descTitle").innerText = title;
@@ -708,7 +708,7 @@ html, body {
         })
         .catch(err => {
             console.error(err);
-            outputContent.textContent += "讀取 XML 失敗！\n";
+            //outputContent.textContent += "讀取 XML 失敗！\n";
             alert("讀取題目說明失敗！");
         });
 }
@@ -780,6 +780,7 @@ function closeDescModal() {
 </body>
 
 </html>
+
 
 
 
