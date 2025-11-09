@@ -2,6 +2,9 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Blockly IDE</title>
 
 <script src="https://unpkg.com/blockly/blockly.min.js"></script>
@@ -37,7 +40,7 @@ html, body {
 
 /* 左側：Blockly 工作區 */
 #blocklyDiv {
-    flex: 0 0 50%; 
+    flex: 0 0 70%; 
     height: 100%;
     min-width: 100px;
     max-width: calc(100% - 100px); 
@@ -231,7 +234,7 @@ html, body {
   let workspace;
   let currentLanguage = 'zh-hant';
   let isResizing = false;
-  let lastBlocklyWidth = '0 0 50%';
+  let lastBlocklyWidth = '0 0 70%';
 
   const langButton = document.getElementById('langButton');
   const main = document.getElementById('main');
@@ -622,4 +625,5 @@ html, body {
 
 </body>
 </html>
+
 
