@@ -660,36 +660,34 @@ html, body {
   }
 
   function loadIOFromId() {
-    // 解析 URL query string
     const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-    if (!id) return; // 沒有 id 就不做事
+    
+    // ✅ 優先用 URL 的 id（因為每題都是用 train.html?id=xxxx 開啟）
+    let id = params.get("id");
 
-    const inputPath = `set/${id}.in`;
-    const ansPath   = `set/${id}.out`;
+    // ✅ 如果 URL 沒有 id，就用之前的 currentId（例如題目切換）
+    if (!id) id = currentId;
 
-    // 讀取 input
-    fetch(inputPath)
-        .then(res => {
-            if (!res.ok) throw new Error(`無法讀取 ${inputPath}`);
-            return res.text();
-        })
-        .then(text => {
-            document.getElementById("inputContent").value = text;
-        })
-        .catch(err => console.error(err));
+    // ✅ 如果兩個都沒有 → 結束
+    if (!id) return;
 
-    // 讀取 answer
-    fetch(ansPath)
-        .then(res => {
-            if (!res.ok) throw new Error(`無法讀取 ${ansPath}`);
-            return res.text();
-        })
-        .then(text => {
-            document.getElementById("ansContent").value = text;
-        })
-        .catch(err => console.error(err));
-  }
+    // ✅ 最終把 currentId 更新成最新 id
+    currentId = id;
+
+    const ts = Date.now();
+    const inputPath = `set/${id}.in?ts=${ts}`;
+    const ansPath   = `set/${id}.out?ts=${ts}`;
+
+    fetch(inputPath, { cache: "no-store" })
+        .then(r => r.text())
+        .then(text => document.getElementById("inputContent").value = text)
+        .catch(console.error);
+
+    fetch(ansPath, { cache: "no-store" })
+        .then(r => r.text())
+        .then(text => document.getElementById("ansContent").value = text)
+        .catch(console.error);
+}
 
   // 初始載入
   window.onload = ()=>{
@@ -722,6 +720,7 @@ html, body {
 </body>
 
 </html>
+
 
 
 
