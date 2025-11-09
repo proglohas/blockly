@@ -256,10 +256,10 @@ html, body {
 </div>
 
 <div id="descModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <h2 id="descTitle"></h2>
-        <pre id="descText" style="white-space:pre-wrap;"></pre>
-        <button onclick="closeDescModal()">關閉</button>
+    <div class="modal-content" style="white-space: pre-wrap; overflow: auto; max-height: 80vh;">
+        <h2 id="descTitle" style="margin-bottom:10px;"></h2>
+        <pre id="descText" style="white-space: pre-wrap;"></pre>
+        <button onclick="closeDescModal()" style="margin-top:10px;">關閉</button>
     </div>
 </div>
     
@@ -636,9 +636,6 @@ html, body {
   }
   
   function showDescription() {
-    const outputContent = document.getElementById("outputContent");
-    outputContent.textContent = ""; // 先清空
-
     // 取得 URL id
     const params = new URLSearchParams(window.location.search);
     let id = params.get("id");
@@ -648,48 +645,52 @@ html, body {
 
     // 兩個都沒有 → 無法讀題目
     if (!id) {
-        outputContent.textContent = "❌ 沒有題目 ID！";
+        alert("沒有題目 ID！");
         return;
     }
 
     // 更新 currentId（確保全域一致）
     currentId = id;
 
-    // 顯示目前題目 ID
-    outputContent.textContent += `📝 目前題目 ID: ${id}\n`;
+    // 先把 ID 顯示到 Output panel
+    const outputContent = document.getElementById("outputContent");
+    outputContent.textContent = `目前題目 ID: ${id}\n`;
 
     // 加 timestamp 防快取
     const xmlPath = `set/${id}.xml?t=${Date.now()}`;
 
     fetch(xmlPath)
         .then(res => {
-            if (!res.ok) throw new Error(`❌ 無法讀取 XML: ${xmlPath}`);
+            if (!res.ok) throw new Error("XML 讀取失敗");
+            outputContent.textContent += "讀取 XML 成功！\n";
             return res.text();
         })
         .then(str => (new DOMParser()).parseFromString(str, "text/xml"))
         .then(xml => {
-            outputContent.textContent += "✅ XML 讀取成功\n";
-
             const titleNode = xml.querySelector("title");
             const descNode  = xml.querySelector("description");
 
             const title = titleNode ? titleNode.textContent.trim() : "（無標題）";
             const desc  = descNode ? descNode.textContent.trim() : "（無說明）";
 
-            outputContent.textContent += `標題: ${title}\n`;
-            outputContent.textContent += `說明:\n${desc}\n`;
+            outputContent.textContent += `標題: ${title}\n說明:\n${desc}\n`;
+
+            // 顯示 descModal
+            document.getElementById("descTitle").innerText = title;
+            document.getElementById("descText").innerText  = desc;
+            document.getElementById("descModal").style.display = "block";
         })
         .catch(err => {
             console.error(err);
-            outputContent.textContent += `❌ 讀取題目說明失敗: ${err}\n`;
+            outputContent.textContent += "讀取 XML 失敗！\n";
+            alert("讀取題目說明失敗！");
         });
 }
 
-    
-  function closeDescModal() {
+// 關閉 Modal
+function closeDescModal() {
     document.getElementById("descModal").style.display = "none";
-  }
-
+}
 
 
   function loadIOFromId() {
@@ -753,6 +754,7 @@ html, body {
 </body>
 
 </html>
+
 
 
 
