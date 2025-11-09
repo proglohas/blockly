@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problem>
+    <title>A001: 簡易加法</title>
+    <description>
+    <![CDATA[
+        說明:
+        題目第一列有一個數字 n, 接著有 n 列。
+        每列有 2 個數字，請相加後輸出。
+        例如輸入：5 3
+        請輸出：8
+]]>
+    </description>
+</problem>
