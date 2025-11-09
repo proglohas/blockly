@@ -560,31 +560,33 @@ function judgeOutput(userLines, answerText){
 function runCode(){
     outputContent.textContent = "執行中...\n";
 
-    // 取得 input
     let inputLines = inputContent.value.split('\n')
                                       .map(line => line.trimEnd());
-
     let inputIndex = 0;
-    const startTime = performance.now(); // ✅ 開始計時
+    const startTime = performance.now();
 
-    let collectedOutput = []; // ✅ 收集輸出用於判題
+    let collectedOutput = [];
 
+    // ✅ 收集 console.log()（Blockly text_print 主要用這個）
+    const originalConsoleLog = console.log;
+    console.log = function(msg){
+        msg = String(msg);
+        collectedOutput.push(msg);
+        outputContent.textContent += msg + "\n";
+    };
+
+    // ✅ 收集 alert()
     const customAlert = (msg) => {
         msg = String(msg);
         collectedOutput.push(msg);
         outputContent.textContent += msg + "\n";
-        outputContent.scrollTop = outputContent.scrollHeight;
     };
 
     const customPrompt = (msg, defaultValue) => {
-        if (inputIndex < inputLines.length) {
-            return inputLines[inputIndex++];
-        } else {
-            return defaultValue === undefined ? null : defaultValue;
-        }
+        if (inputIndex < inputLines.length) return inputLines[inputIndex++];
+        return defaultValue === undefined ? null : defaultValue;
     };
 
-    // 替換 alert/prompt
     const originalAlert = window.alert;
     const originalPrompt = window.prompt;
     window.alert = customAlert;
@@ -599,19 +601,17 @@ function runCode(){
         outputContent.textContent += "\n\n!!! 程式執行錯誤:\n" + e + "\n";
     }
     finally {
-        // 恢復 alert/prompt
         window.alert = originalAlert;
         window.prompt = originalPrompt;
+        console.log = originalConsoleLog;
 
         const endTime = performance.now();
         const elapsed = ((endTime - startTime) / 1000).toFixed(4);
 
-        // ✅ 開始 Judge
+        // ✅ 這次會有 output 了
         judgeOutput(collectedOutput, answerContent.value);
 
-        // ✅ 顯示時間
         outputContent.textContent += `⏱ 執行時間：${elapsed} 秒\n`;
-        outputContent.scrollTop = outputContent.scrollHeight;
     }
 }
 
@@ -839,6 +839,7 @@ function closeDescModal() {
 </body>
 
 </html>
+
 
 
 
