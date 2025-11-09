@@ -522,45 +522,75 @@ html, body {
     });
   }
 
+function judgeOutput(userLines, answerText){
+    const ansLines = answerText.split('\n').map(s => s.trimEnd());
 
-  // **執行程式碼：實現 Readline 和 Print** (保持不變)
- function runCode(){
-    outputContent.textContent = "執行中...\n";
+    outputContent.textContent += "\n=== 判定結果 ===\n";
+
+    // ✅ 檢查 OLE（輸出太多）
+    if (userLines.length > ansLines.length) {
+        outputContent.textContent += `OLE：你的輸出行數 ${userLines.length} 超過答案行數 ${ansLines.length}\n`;
+        return;
+    }
+
+    // ✅ 比對每行（WA）
+    for (let i = 0; i < userLines.length; i++) {
+        if (userLines[i] !== ansLines[i]) {
+            outputContent.textContent += 
+              `WA：第 ${i+1} 行不正確\n` +
+              `你的輸出：${userLines[i]}\n` +
+              `正確答案：${ansLines[i]}\n`;
+            return;
+        }
+    }
+
+    // ✅ 檢查答案不足（WA）
+    if (userLines.length < ansLines.length) {
+        outputContent.textContent += 
+          `WA：答案不足，你輸出 ${userLines.length} 行，但需要 ${ansLines.length} 行\n`;
+        return;
+    }
+
+    // ✅ 全部正確
+    outputContent.textContent += "✅ AC：通過所有測試\n";
+}
+
     
+  // **執行程式碼：實現 Readline 和 Print** (保持不變)
+function runCode(){
+    outputContent.textContent = "執行中...\n";
+
+    // 取得 input
     let inputLines = inputContent.value.split('\n')
                                       .map(line => line.trimEnd());
-    let inputIndex = 0;
-    const startTime = performance.now();
 
-    const customAlert = (message) => {
-        outputContent.textContent += (String(message) + '\n');
+    let inputIndex = 0;
+    const startTime = performance.now(); // ✅ 開始計時
+
+    let collectedOutput = []; // ✅ 收集輸出用於判題
+
+    const customAlert = (msg) => {
+        msg = String(msg);
+        collectedOutput.push(msg);
+        outputContent.textContent += msg + "\n";
         outputContent.scrollTop = outputContent.scrollHeight;
     };
 
-    const customPrompt = (message, defaultValue) => {
+    const customPrompt = (msg, defaultValue) => {
         if (inputIndex < inputLines.length) {
-            const input = inputLines[inputIndex];
-            inputIndex++;
-            return input;
+            return inputLines[inputIndex++];
         } else {
-            return (defaultValue === undefined) ? null : defaultValue;
+            return defaultValue === undefined ? null : defaultValue;
         }
     };
-    
+
+    // 替換 alert/prompt
     const originalAlert = window.alert;
     const originalPrompt = window.prompt;
     window.alert = customAlert;
     window.prompt = customPrompt;
 
-    // ✅ 用來接收程式輸出
-    let programOutput = [];
-
-    // ✅ 包裝 print() 功能
-    window.print = function(msg){
-        programOutput.push(String(msg));
-    };
-
-    try{
+    try {
         const code = Blockly.JavaScript.workspaceToCode(workspace);
         eval(code);
         outputContent.textContent += "\n--- 程式執行完畢 ---\n";
@@ -569,46 +599,18 @@ html, body {
         outputContent.textContent += "\n\n!!! 程式執行錯誤:\n" + e + "\n";
     }
     finally {
+        // 恢復 alert/prompt
         window.alert = originalAlert;
         window.prompt = originalPrompt;
 
         const endTime = performance.now();
         const elapsed = ((endTime - startTime) / 1000).toFixed(4);
 
-        // ✅ Judge 開始 ----------------------------------------
+        // ✅ 開始 Judge
+        judgeOutput(collectedOutput, answerContent.value);
 
-        const userLines = programOutput;
-        const ansLines = ansContent.value.split("\n").map(s => s.trimEnd());
-
-        let verdict = "AC";
-
-        // ✅ OLE：使用者輸出比標準答案多
-        if (userLines.length > ansLines.length){
-            verdict = "OLE";
-        }
-        else {
-            // ✅ WA：逐行比對
-            for (let i = 0; i < userLines.length; i++){
-                if (userLines[i] !== ansLines[i]){
-                    verdict = `WA (錯誤行數: ${i+1})`;
-                    break;
-                }
-            }
-        }
-
-        outputContent.textContent += "\n============================\n";
-        outputContent.textContent += `Verdict: ${verdict}\n`;
+        // ✅ 顯示時間
         outputContent.textContent += `⏱ 執行時間：${elapsed} 秒\n`;
-        outputContent.textContent += "============================\n";
-
-        // ✅ 顯示使用者輸出
-        outputContent.textContent += "\n【你的輸出】\n";
-        outputContent.textContent += userLines.join("\n") + "\n";
-
-        // ✅ 顯示標準答案
-        outputContent.textContent += "\n【正確答案】\n";
-        outputContent.textContent += ansLines.join("\n") + "\n";
-
         outputContent.scrollTop = outputContent.scrollHeight;
     }
 }
@@ -837,6 +839,7 @@ function closeDescModal() {
 </body>
 
 </html>
+
 
 
 
