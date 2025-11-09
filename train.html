@@ -653,32 +653,13 @@ html, body {
     // 更新 currentId（確保全域一致）
     currentId = id;
 
-    // 加 timestamp 防快取
-    const xmlPath = `set/${id}.xml?t=${Date.now()}`;
+    // ✅ 先把 ID 顯示到 Output panel
+    const outputContent = document.getElementById("outputContent");
+    outputContent.textContent = `目前題目 ID: ${id}\n`;
 
-    fetch(xmlPath)
-        .then(res => {
-            if (!res.ok) throw new Error("XML 讀取失敗");
-            return res.text();
-        })
-        .then(str => (new DOMParser()).parseFromString(str, "text/xml"))
-        .then(xml => {
-            const titleNode = xml.querySelector("title");
-            const descNode  = xml.querySelector("description");
+    
+}
 
-            const title = titleNode ? titleNode.textContent.trim() : "（無標題）";
-            const desc  = descNode ? descNode.textContent.trim() : "（無說明）";
-
-            document.getElementById("descTitle").innerText = title;
-            document.getElementById("descText").innerText  = desc;
-
-            document.getElementById("descModal").style.display = "block";
-        })
-        .catch(err => {
-            console.error(err);
-            alert("讀取題目說明失敗！");
-        });
-  }
     
   function closeDescModal() {
     document.getElementById("descModal").style.display = "none";
@@ -747,6 +728,7 @@ html, body {
 </body>
 
 </html>
+
 
 
 
