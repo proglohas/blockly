@@ -636,6 +636,8 @@ html, body {
   }
   
   function showDescription() {
+    const outputContent = document.getElementById("outputContent");
+    outputContent.textContent = ""; // 先清空
 
     // 取得 URL id
     const params = new URLSearchParams(window.location.search);
@@ -646,18 +648,41 @@ html, body {
 
     // 兩個都沒有 → 無法讀題目
     if (!id) {
-        alert("沒有題目 ID！");
+        outputContent.textContent = "❌ 沒有題目 ID！";
         return;
     }
 
     // 更新 currentId（確保全域一致）
     currentId = id;
 
-    // ✅ 先把 ID 顯示到 Output panel
-    const outputContent = document.getElementById("outputContent");
-    outputContent.textContent = `目前題目 ID: ${id}\n`;
+    // 顯示目前題目 ID
+    outputContent.textContent += `📝 目前題目 ID: ${id}\n`;
 
-    
+    // 加 timestamp 防快取
+    const xmlPath = `set/${id}.xml?t=${Date.now()}`;
+
+    fetch(xmlPath)
+        .then(res => {
+            if (!res.ok) throw new Error(`❌ 無法讀取 XML: ${xmlPath}`);
+            return res.text();
+        })
+        .then(str => (new DOMParser()).parseFromString(str, "text/xml"))
+        .then(xml => {
+            outputContent.textContent += "✅ XML 讀取成功\n";
+
+            const titleNode = xml.querySelector("title");
+            const descNode  = xml.querySelector("description");
+
+            const title = titleNode ? titleNode.textContent.trim() : "（無標題）";
+            const desc  = descNode ? descNode.textContent.trim() : "（無說明）";
+
+            outputContent.textContent += `標題: ${title}\n`;
+            outputContent.textContent += `說明:\n${desc}\n`;
+        })
+        .catch(err => {
+            console.error(err);
+            outputContent.textContent += `❌ 讀取題目說明失敗: ${err}\n`;
+        });
 }
 
     
@@ -728,6 +753,7 @@ html, body {
 </body>
 
 </html>
+
 
 
 
