@@ -151,7 +151,7 @@ html, body {
 }
 
 /* **【Modal 樣式】** */
-/* Desc Modal 基本樣式 */
+/* 遮罩層 */
 #descModal {
     position: fixed;
     top: 0;
@@ -159,22 +159,22 @@ html, body {
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.5); /* 半透明遮罩 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* 確保蓋在其他元素上 */
+    display: flex;                 /* ✅ flex 置中 */
+    justify-content: center;       /* 水平置中 */
+    align-items: center;           /* 垂直置中 */
+    z-index: 1000;                 /* 確保在最上層 */
 }
 
+/* modal 內容 */
 #descModal .modal-content {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     max-width: 600px;
     width: 90%;
-    max-height: 80vh;
-    overflow: auto;
+    max-height: 80vh;      /* 不超過螢幕高度 */
+    overflow: auto;        /* 內容過長可滾動 */
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    font-family: monospace; /* 保留程式風格 */
 }
     
 #shareModal {
@@ -780,6 +780,7 @@ function closeDescModal() {
 </body>
 
 </html>
+
 
 
 
