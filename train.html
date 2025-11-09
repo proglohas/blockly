@@ -636,17 +636,41 @@ html, body {
   }
   
   function showDescription() {
-    const xmlPath = `set/${currentId}.xml`;
+
+    // 取得 URL id
+    const params = new URLSearchParams(window.location.search);
+    let id = params.get("id");
+
+    // URL 沒有 id → 用 currentId
+    if (!id) id = currentId;
+
+    // 兩個都沒有 → 無法讀題目
+    if (!id) {
+        alert("沒有題目 ID！");
+        return;
+    }
+
+    // 更新 currentId（確保全域一致）
+    currentId = id;
+
+    // 加 timestamp 防快取
+    const xmlPath = `set/${id}.xml?t=${Date.now()}`;
 
     fetch(xmlPath)
-        .then(r => r.text())
+        .then(res => {
+            if (!res.ok) throw new Error("XML 讀取失敗");
+            return res.text();
+        })
         .then(str => (new DOMParser()).parseFromString(str, "text/xml"))
         .then(xml => {
-            const title = xml.getElementsByTagName("title")[0]?.textContent || "（無標題）";
-            const desc  = xml.getElementsByTagName("description")[0]?.textContent || "（無說明）";
+            const titleNode = xml.querySelector("title");
+            const descNode  = xml.querySelector("description");
+
+            const title = titleNode ? titleNode.textContent.trim() : "（無標題）";
+            const desc  = descNode ? descNode.textContent.trim() : "（無說明）";
 
             document.getElementById("descTitle").innerText = title;
-            document.getElementById("descText").innerText = desc;
+            document.getElementById("descText").innerText  = desc;
 
             document.getElementById("descModal").style.display = "block";
         })
@@ -654,10 +678,13 @@ html, body {
             console.error(err);
             alert("讀取題目說明失敗！");
         });
-}
+  }
+    
   function closeDescModal() {
     document.getElementById("descModal").style.display = "none";
   }
+
+
 
   function loadIOFromId() {
     const params = new URLSearchParams(window.location.search);
@@ -720,6 +747,7 @@ html, body {
 </body>
 
 </html>
+
 
 
 
