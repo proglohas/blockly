@@ -612,17 +612,31 @@ html, body {
   }
   
   // **分享連結** (保持不變)
-  function shareLink(){
+  function shareLink() {
     if (!workspace) return alert("工作區尚未載入，無法分享。");
-    
-    const xml = Blockly.Xml.workspaceToDom(workspace);
-    const text = Blockly.Xml.domToText(xml);
-    
-    const encoded = btoa(text);
-    const url = location.origin + location.pathname + "#xml=" + encoded;
-    
+
+    // 先嘗試從 URL 取得 id
+    const params = new URLSearchParams(window.location.search);
+    let id = params.get("id");
+
+    // 如果 URL 沒有 id，就從全域 currentId 取得
+    if (!id && typeof currentId !== "undefined") {
+        id = currentId;
+    }
+
+    // 將 Blockly Workspace 轉成 XML
+    const xmlDom = Blockly.Xml.workspaceToDom(workspace);
+    const xmlText = Blockly.Xml.domToText(xmlDom);
+
+    // base64 編碼
+    const encoded = btoa(xmlText);
+
+    // 建立完整分享連結
+    const idParam = id ? `?id=${id}` : "";
+    const url = location.origin + location.pathname + idParam + "#xml=" + encoded;
+
     openModal(url);
-  }
+}
 
   // 匯出 XML (保持不變)
   function exportXML(){
@@ -756,37 +770,40 @@ function closeDescModal() {
         .catch(console.error);
 }
 
-  // 初始載入
-  window.onload = ()=>{
-    enableResize();  // 啟用左右寬度拖曳
-    enableVResize(); // 啟用垂直高度拖曳
-    loadLanguage('zh-hant');
+  window.onload = () => {
+    enableResize();   // 啟用左右寬度拖曳
+    enableVResize();  // 啟用上下高度拖曳
+    loadLanguage('zh-hant'); // 初始化 Blockly 語言
 
-    blocklyDiv.style.flex = lastBlocklyWidth;
+    // 解析 URL
     const params = new URLSearchParams(window.location.search);
-    currentId = params.get("id") || null;
+    currentId = params.get("id") || currentId;
 
-    // 🚀 自動載入 Input/Answer
-    if(currentId) loadIOFromId();
-      
-    // 從 URL hash 載入 XML
-    if(location.hash.startsWith("#xml=")){
-      setTimeout(() => {
-        if (!workspace) return;
-        const encoded = location.hash.slice(5);
-        try{
-          const xmlText = atob(encoded);
-          const dom = Blockly.Xml.textToDom(xmlText);
-          Blockly.Xml.domToWorkspace(dom, workspace);
-        } catch(err){console.error("URL XML 無效");}
-      }, 500);
+    // 🚀 自動載入 Input/Answer（如果有 id）
+    if (currentId) loadIOFromId();
+
+    // 從 URL hash 載入 XML（覆蓋現有工作區）
+    if (location.hash.startsWith("#xml=")) {
+        setTimeout(() => {
+            if (!workspace) return;
+            const encoded = location.hash.slice(5);
+            try {
+                const xmlText = atob(encoded);
+                const dom = Blockly.Xml.textToDom(xmlText);
+                Blockly.Xml.domToWorkspace(dom, workspace);
+            } catch (err) {
+                console.error("URL XML 無效", err);
+            }
+        }, 500); // 等 Blockly 初始化完成
     }
-  };
+};
+
 </script>
 
 </body>
 
 </html>
+
 
 
 
