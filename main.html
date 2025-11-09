@@ -29,7 +29,14 @@ fetch('problemset.xml')
       const id = problems[i].getElementsByTagName('id')[0].textContent;
       const name = problems[i].getElementsByTagName('name')[0].textContent;
       const a = document.createElement('a');
-      a.href = `train.html?id=${id}`;
+
+      // 產生 5 碼亂數字串
+      const rand = Math.random().toString(36).substring(2, 7);
+
+      // 新視窗 + 避免快取
+      a.href = `train.html?id=${id}&v=${rand}`;
+      a.target = "_blank";
+
       a.textContent = `${id} - ${name}`;
       listDiv.appendChild(a);
     }
