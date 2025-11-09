@@ -177,6 +177,10 @@ html, body {
     white-space: pre-wrap;  /* 保留換行 */
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
+
+#descModal #descText {
+    white-space: pre-wrap;
+}
     
 #shareModal {
     position: fixed;
@@ -282,13 +286,15 @@ html, body {
     </div>
 </div>
 
-<div id="descModal"  style="display:none;">
-    <div class="modal-content" style="white-space: pre-wrap; overflow: auto; max-height: 80vh;">
+<div id="descModal" style="display:none;">
+    <div class="modal-content">
         <h2 id="descTitle"></h2>
-        <pre id="descText" style="white-space: pre-wrap;"></pre>
+        <pre id="descText"></pre>
         <button onclick="closeDescModal()" style="margin-top:10px;">關閉</button>
     </div>
 </div>
+    
+
     
 <script>
   // **【全域變數】**
@@ -781,6 +787,7 @@ function closeDescModal() {
 </body>
 
 </html>
+
 
 
 
