@@ -681,7 +681,7 @@ html, body {
 
     // 先把 ID 顯示到 Output panel
     const outputContent = document.getElementById("outputContent");
-    outputContent.textContent = `目前題目 ID: ${id}\n`;
+    //outputContent.textContent = `目前題目 ID: ${id}\n`;
 
     // 加 timestamp 防快取
     const xmlPath = `set/${id}.xml?t=${Date.now()}`;
@@ -689,7 +689,7 @@ html, body {
     fetch(xmlPath)
         .then(res => {
             if (!res.ok) throw new Error("XML 讀取失敗");
-            outputContent.textContent += "讀取 XML 成功！\n";
+            //outputContent.textContent += "讀取 XML 成功！\n";
             return res.text();
         })
         .then(str => (new DOMParser()).parseFromString(str, "text/xml"))
@@ -781,6 +781,7 @@ function closeDescModal() {
 </body>
 
 </html>
+
 
 
 
