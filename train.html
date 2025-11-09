@@ -151,29 +151,30 @@ html, body {
 }
 
 /* **【Modal 樣式】** */
-/* 遮罩層 */
+/* 整個遮罩 */
 #descModal {
-    position: fixed;
+    position: fixed;       /* 固定於視窗 */
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5); /* 半透明遮罩 */
-    display: flex;                 /* ✅ flex 置中 */
-    justify-content: center;       /* 水平置中 */
-    align-items: center;           /* 垂直置中 */
-    z-index: 1000;                 /* 確保在最上層 */
+    width: 100vw;          /* 滿版寬度 */
+    height: 100vh;         /* 滿版高度 */
+    background-color: rgba(0, 0, 0, 0.5); /* 半透明黑背景 */
+    display: flex;         /* flex 置中 modal-content */
+    justify-content: center; /* 水平置中 */
+    align-items: center;     /* 垂直置中 */
+    z-index: 1000;         /* 確保在最上層 */
 }
 
-/* modal 內容 */
+/* 內部內容框 */
 #descModal .modal-content {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    max-width: 600px;
-    width: 90%;
-    max-height: 80vh;      /* 不超過螢幕高度 */
-    overflow: auto;        /* 內容過長可滾動 */
+    max-width: 600px;       /* 最大寬度 */
+    width: 90%;             /* 依視窗縮放 */
+    max-height: 80vh;       /* 高度限制，避免超出視窗 */
+    overflow: auto;         /* 內容過多時顯示滾動條 */
+    white-space: pre-wrap;  /* 保留換行 */
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
     
@@ -780,6 +781,7 @@ function closeDescModal() {
 </body>
 
 </html>
+
 
 
 
