@@ -18,7 +18,7 @@ a:hover { text-decoration:underline; }
 <div id="problemList">Loading...</div>
 
 <script>
-fetch('problemset.xml')
+fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
   .then(resp => resp.text())
   .then(str => (new DOMParser()).parseFromString(str,"text/xml"))
   .then(xml => {
