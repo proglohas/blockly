@@ -12,4 +12,8 @@
     <id>a004</id>
     <name>閏年判定</name>
   </problem>
+  <problem>
+    <id>a022</id>
+    <name>迴文</name>
+  </problem>
 </problems>
