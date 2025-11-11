@@ -797,12 +797,12 @@ function closeDescModal() {
 
     fetch(inputPath, { cache: "no-store" })
         .then(r => r.text())
-        .then(text => document.getElementById("inputContent").value = text)
+        .then(text => document.getElementById("inputContent").value.trim() = text)
         .catch(console.error);
 
     fetch(ansPath, { cache: "no-store" })
         .then(r => r.text())
-        .then(text => document.getElementById("ansContent").value = text)
+        .then(text => document.getElementById("ansContent").value.trim() = text)
         .catch(console.error);
 }
 
@@ -839,6 +839,7 @@ function closeDescModal() {
 </body>
 
 </html>
+
 
 
 
