@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problem>
+    <title>b969: hello, everyone</title>
+    <description>
+    <![CDATA[
+        說明:
+        給你一串人名，請你一一向他們問好。
+                  輸入只有二行。第一行含有要問候的人名，人名之間以空白隔開，人名中不含空白。第二行含有問候語。
+]]>
+    </description>
+</problem>
