@@ -20,14 +20,25 @@ html, body {
     font-family: sans-serif;
 }
 #toolbar {
-    height: 40px; 
-    background: #eee; 
-    border-bottom: 1px solid #ccc; 
-    display: flex; 
-    align-items: center; 
-    padding: 0 10px; 
-    box-sizing: border-box;
+    height: 40px; 
+    background: #eee; 
+    border-bottom: 1px solid #ccc; 
+    display: flex; 
+    align-items: center; 
+    padding: 0 10px; 
+    box-sizing: border-box;
+    /* 核心修改：讓內容分散到兩端 */
+    justify-content: space-between; 
 }
+
+/* 新增：Email 的樣式 */
+#emailDisplay {
+    color: #1E90FF; /* 道奇藍 (Dodger Blue) */
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-left: 10px; /* 確保與按鈕有間隔 */
+}
+    
 #toolbar button {
     margin-right: 10px;
 }
@@ -238,12 +249,15 @@ html, body {
 <body>
 
 <div id="toolbar">
-  <button onclick="exportXML()">匯出 XML</button>
-  <button onclick="importXML()">匯入 XML</button>
-  <button onclick="shareLink()">分享</button> 
-  <button onclick="runCode()">執行程式碼</button>
-  <button id="langButton" onclick="switchLanguage()">切換語言 (English)</button>
-  <button onclick="showDescription()">題目說明</button>
+  <div id="toolbar-buttons">
+    <button onclick="exportXML()">匯出 XML</button>
+    <button onclick="importXML()">匯入 XML</button>
+    <button onclick="shareLink()">分享</button> 
+    <button onclick="runCode()">執行程式碼</button>
+    <button id="langButton" onclick="switchLanguage()">切換語言 (English)</button>
+    <button onclick="showDescription()">題目說明</button>
+  </div>
+  <span id="emailDisplay">proglohas@gmail.com</span>
 </div>
 
 <div id="main">
@@ -839,6 +853,7 @@ function closeDescModal() {
 </body>
 
 </html>
+
 
 
 
