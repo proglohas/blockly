@@ -64,7 +64,17 @@ html, body {
 
 }
 
-
+#emailDisplay {
+    color: #1E90FF; /* 道奇藍 */
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-left: 10px; 
+    
+    /* 核心：如果空間不夠，Email 允許被壓縮或縮小字體 */
+    flex-shrink: 1; /* 允許被擠壓 */
+    min-width: 0; /* 允許寬度降到零 */
+    text-align: right; /* 靠右對齊 */
+}
 
 /* 主容器：左右分割 */
 
@@ -489,7 +499,7 @@ html, body {
   <button id="langButton" onclick="switchLanguage()">切換語言 (English)</button>
 
   <button onclick="showDescription()">題目說明</button>
-
+  <span id="emailDisplay">proglohas@gmail.com</span>
 </div>
 
 
@@ -1679,6 +1689,7 @@ function closeDescModal() {
 
 
 </html>
+
 
 
 
