@@ -17,6 +17,10 @@
     <name>迴文</name>
   </problem>
   <problem>
+    <id>a024</id>
+    <name>最大公因數</name>
+  </problem>
+  <problem>
     <id>a034</id>
     <name>二進位制轉換</name>
   </problem>
