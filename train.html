@@ -19,6 +19,7 @@ html, body {
     overflow: hidden; 
     font-family: sans-serif;
 }
+/* 找到 #toolbar，確保內容靠兩邊對齊 */
 #toolbar {
     height: 40px; 
     background: #eee; 
@@ -27,20 +28,33 @@ html, body {
     align-items: center; 
     padding: 0 10px; 
     box-sizing: border-box;
-    /* 核心修改：讓內容分散到兩端 */
-    justify-content: space-between; 
+    /* 核心：讓按鈕群和 Email 分散在兩端 */
+    justify-content: space-between; 
 }
 
-/* 新增：Email 的樣式 */
+/* 新增：將按鈕群強制保持單行，不換行 */
+#toolbar-buttons {
+    display: flex; /* 確保按鈕群本身是 flex 容器 */
+    white-space: nowrap; /* 核心：強制不換行 */
+    overflow: hidden; /* 隱藏超出寬度的按鈕（在極窄時） */
+}
+
+#toolbar button {
+    margin-right: 10px;
+    flex-shrink: 0; /* 確保按鈕不被壓縮 */
+}
+
+/* Email 樣式 */
 #emailDisplay {
-    color: #1E90FF; /* 道奇藍 (Dodger Blue) */
+    color: #1E90FF; /* 道奇藍 */
     font-size: 0.9em;
     font-weight: bold;
-    margin-left: 10px; /* 確保與按鈕有間隔 */
-}
+    margin-left: 10px; 
     
-#toolbar button {
-    margin-right: 10px;
+    /* 核心：如果空間不夠，Email 允許被壓縮或縮小字體 */
+    flex-shrink: 1; /* 允許被擠壓 */
+    min-width: 0; /* 允許寬度降到零 */
+    text-align: right; /* 靠右對齊 */
 }
 
 /* 主容器：左右分割 */
@@ -853,6 +867,7 @@ function closeDescModal() {
 </body>
 
 </html>
+
 
 
 
