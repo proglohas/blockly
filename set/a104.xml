@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problem>
+    <title>a024: 最大公因數</title>
+    <description>
+    <![CDATA[
+        說明:
+        題目第一列有一個數字 n, 接著有 n 組, 每組兩列。
+        每組第一列有一個數字 k
+        下一列有 k 個數字,
+                  請將 k 個數字依小到大後排列輸出, 如測資所示.
+      ]]>
+    </description>
+</problem>
