@@ -21,7 +21,32 @@ h1 {
     color: #007bff; /* 標題顏色 */
     border-bottom: 2px solid #007bff; /* 標題下方加強分隔線 */
     padding-bottom: 10px;
+    /* 讓 h1 內容靠右對齊 */
+    text-align: right; 
+    /* 確保 h1 內容可以靠右對齊 (例如，如果內容是複合的) */
+    display: flex;
+    justify-content: space-between; /* 在左右兩邊放置元素 */
+    align-items: flex-end; /* 將內容放在底部，與分隔線對齊 */
+    flex-wrap: wrap; /* 避免在小螢幕上溢出 */
 }
+
+/* 確保主要的 "題目列表" 標題靠左 */
+h1 span.title-main {
+    text-align: left;
+    flex-grow: 1; /* 讓它佔用剩餘空間 */
+    color: #333; /* 可以選擇讓主標題使用深色以增加區分 */
+    font-size: 1.2em; /* 稍微小一點 */
+}
+
+/* 讓旭光高中練習用的文字靠右 */
+h1 span.title-extra {
+    text-align: right;
+    color: #007bff; /* 使用主題色 */
+    font-size: 0.8em; /* 練習用文字小一點 */
+    font-weight: normal; /* 不加粗 */
+    margin-left: 20px; /* 與主標題保持距離 */
+}
+
 
 #problemList {
     background-color: #ffffff; /* 列表區域使用白色背景以增加對比 */
@@ -29,7 +54,6 @@ h1 {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
 }
-
 /* 題目連結樣式 */
 a {
     display: block;
@@ -41,12 +65,10 @@ a {
     /* 淡淡的分隔線 */
     border-bottom: 1px solid #e0e0e0; /* 淡淡的灰色分隔線 */
 }
-
 /* 移除最後一個元素底部的分隔線 */
 a:last-child {
     border-bottom: none;
 }
-
 a:hover {
     text-decoration: none;
     background-color: #e6f7ff; /* 滑鼠移上時使用更淡的藍色背景 */
@@ -55,7 +77,12 @@ a:hover {
 </style>
 </head>
 <body>
-<h1>題目列表</h1>
+
+<h1>
+    <span class="title-main">題目列表</span>
+    <span class="title-extra">旭光高中 / 草屯國中 練習用</span>
+</h1>
+
 <div id="problemList">Loading...</div>
 
 <script>
