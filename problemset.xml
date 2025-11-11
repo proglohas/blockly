@@ -16,4 +16,8 @@
     <id>a022</id>
     <name>迴文</name>
   </problem>
+  <problem>
+    <id>a034</id>
+    <name>二進位制轉換</name>
+  </problem>
 </problems>
