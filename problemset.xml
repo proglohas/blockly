@@ -8,4 +8,8 @@
     <id>a002</id>
     <name>簡易加法</name>
   </problem>
+  <problem>
+    <id>a004</id>
+    <name>閏年判定</name>
+  </problem>
 </problems>
