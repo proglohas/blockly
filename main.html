@@ -38,13 +38,26 @@ h1 span.title-main {
     font-size: 1.2em; /* 稍微小一點 */
 }
 
-/* 讓旭光高中練習用的文字靠右 */
-h1 span.title-extra {
+/* 讓右側的資訊可以垂直排列 */
+h1 div.title-info {
     text-align: right;
+    display: flex;
+    flex-direction: column; /* 垂直堆疊子元素 */
+    align-items: flex-end; /* 讓內部元素靠右對齊 */
+}
+
+/* proglohas@gmail.com 的樣式 */
+h1 span.title-email {
+    color: #555; /* 使用較柔和的顏色 */
+    font-size: 0.7em; /* 更小的字體 */
+    margin-bottom: 5px; /* 與下方的文字有一點間隔 */
+}
+
+/* 旭光高中練習用的樣式 */
+h1 span.title-extra {
     color: #007bff; /* 使用主題色 */
     font-size: 0.8em; /* 練習用文字小一點 */
     font-weight: normal; /* 不加粗 */
-    margin-left: 20px; /* 與主標題保持距離 */
 }
 
 
@@ -80,7 +93,10 @@ a:hover {
 
 <h1>
     <span class="title-main">題目列表</span>
-    <span class="title-extra">旭光高中 / 草屯國中 練習用</span>
+    <div class="title-info">
+        <span class="title-email">proglohas@gmail.com</span>
+        <span class="title-extra">旭光高中 / 草屯國中  練習網站</span>
+    </div>
 </h1>
 
 <div id="problemList">Loading...</div>
