@@ -22,7 +22,7 @@ h1 {
     border-bottom: 2px solid #007bff; /* 標題下方加強分隔線 */
     padding-bottom: 10px;
     /* 讓 h1 內容靠右對齊 */
-    text-align: right; 
+    text-align: right;
     /* 確保 h1 內容可以靠右對齊 (例如，如果內容是複合的) */
     display: flex;
     justify-content: space-between; /* 在左右兩邊放置元素 */
@@ -67,21 +67,46 @@ h1 span.title-extra {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
 }
-/* 題目連結樣式 */
-a {
+
+/* 題目連結樣式 & 統一高度的基礎樣式 */
+a, .placeholder { /* 讓 a 和新的佔位符樣式統一 */
     display: block;
-    padding: 10px 0;
+    padding: 10px 5px; /* <--- 讓 a/placeholder 決定高度和左右 padding */
     margin: 0;
     text-decoration: none;
     color: #333; /* 連結文字顏色 */
     transition: background-color 0.3s ease;
-    /* 淡淡的分隔線 */
     border-bottom: 1px solid #e0e0e0; /* 淡淡的灰色分隔線 */
 }
-/* 移除最後一個元素底部的分隔線 */
-a:last-child {
+
+/* 測資連結的顏色調整 */
+#problemList a {
+    color: #007bff; /* 讓測資連結的顏色更明顯 */
+    font-weight: normal;
+}
+
+/* 題目名稱（非連結）的特殊處理 */
+#problemList a.problem-title {
+    font-weight: bold;
+    color: #333;
+    cursor: default; /* 讓題目名稱沒有手型游標 */
+}
+
+
+/* 統一表格的單元格樣式 */
+#problemList table td {
+    vertical-align: top;
+    padding: 0; /* <--- **關鍵**：將 padding 設為 0，讓 a/placeholder 決定間距 */
+    overflow: hidden;
+    text-align: left;
+}
+
+/* 移除最後一個元素底部的分隔線 - 必須針對 a/placeholder 處理 */
+#problemList tr:last-child a,
+#problemList tr:last-child .placeholder {
     border-bottom: none;
 }
+
 a:hover {
     text-decoration: none;
     background-color: #e6f7ff; /* 滑鼠移上時使用更淡的藍色背景 */
@@ -95,7 +120,7 @@ a:hover {
     <span class="title-main">題目列表</span>
     <div class="title-info">
         <span class="title-email">proglohas@gmail.com</span>
-        <span class="title-extra">旭光高中 / 草屯國中  練習網站</span>
+        <span class="title-extra">旭光高中 / 草屯國中 練習網站</span>
     </div>
 </h1>
 
@@ -115,6 +140,17 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
     table.style.tableLayout = 'fixed'; // 固定欄寬
     listDiv.appendChild(table);
 
+    // 統一設定欄寬
+    const colgroup = document.createElement('colgroup');
+    colgroup.innerHTML = `
+        <col style="width: 30%;"> <col style="width: 14%;">
+        <col style="width: 14%;">
+        <col style="width: 14%;">
+        <col style="width: 14%;">
+        <col style="width: 14%;">
+    `;
+    table.appendChild(colgroup);
+
     const problems = xml.getElementsByTagName('problem');
     for(let i=0;i<problems.length;i++){
       const id = problems[i].getElementsByTagName('id')[0].textContent;
@@ -124,31 +160,38 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
 
       const tr = document.createElement('tr');
 
-      // 題目欄
+      // 題目欄 - 使用 <a> 標籤來統一高度和分隔線
       const titleTd = document.createElement('td');
-      titleTd.style.verticalAlign = 'top';
-      titleTd.style.padding = '5px';
-      titleTd.style.overflow = 'hidden';
       titleTd.style.whiteSpace = 'nowrap';
       titleTd.style.textOverflow = 'ellipsis';
-      titleTd.style.fontWeight = 'bold';
-      titleTd.textContent = `${id} - ${name}`;
-      titleTd.style.width = '30%'; // 題目欄寬度，可依需求調整
+      
+      const titleA = document.createElement('a');
+      titleA.classList.add('problem-title'); // 用 class 區分題目和測資
+      titleA.textContent = `${id} - ${name}`;
+      titleTd.appendChild(titleA);
       tr.appendChild(titleTd);
 
       // 測資欄（最多 5 個）
       for(let j=1;j<=5;j++){
         const td = document.createElement('td');
-        td.style.verticalAlign = 'top';
-        td.style.padding = '5px';
-        td.style.textAlign = 'left'; // 測資靠左
+        
         if(j <= ts){
+          // 有測資：使用 <a> 連結
           const a = document.createElement('a');
           const rand = Math.random().toString(36).substring(2,7);
           a.href = `train.html?id=${id}_${String(j).padStart(2,'0')}&v=${rand}`;
           a.target = "_blank";
           a.textContent = `測資 ${j}`;
           td.appendChild(a);
+        } else {
+          // 沒有測資：使用一個佔位符元素來維持高度和分隔線樣式
+          const placeholder = document.createElement('span');
+          placeholder.classList.add('placeholder');
+          placeholder.textContent = '\u00A0'; // 使用不換行空格佔位
+          placeholder.style.backgroundColor = 'transparent'; // 確保背景是透明的
+          placeholder.style.color = '#ccc'; // 可以讓佔位符的文字/空格隱藏或呈現灰色
+          placeholder.style.cursor = 'default';
+          td.appendChild(placeholder);
         }
         tr.appendChild(td);
       }
@@ -156,9 +199,9 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
       table.appendChild(tr);
     }
   })
-  .catch(err => { 
-    console.error(err); 
-    document.getElementById('problemList').textContent='讀取錯誤'; 
+  .catch(err => {
+    console.error(err);
+    document.getElementById('problemList').textContent='讀取錯誤';
   });
 </script>
 </body>
