@@ -132,6 +132,7 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
         // 空 td 填充到題目名稱起始欄位
         for(let s=1; s<startCol; s++){
           const emptyTd = document.createElement('td');
+          emptyTd.style.textAlign = 'left';
           tr.appendChild(emptyTd);
         }
 
@@ -141,22 +142,28 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
           titleTd.textContent = `${id} - ${name}`;
           titleTd.style.fontWeight = 'bold';
           titleTd.style.padding = '5px 10px';
+          titleTd.style.textAlign = 'left';
           tr.appendChild(titleTd);
         } else {
           const emptyTd = document.createElement('td');
+          emptyTd.style.textAlign = 'left';
           tr.appendChild(emptyTd);
         }
 
         // 本列測資
         for(let j=r*maxPerRow+1; j<=Math.min((r+1)*maxPerRow, ts); j++){
           const td = document.createElement('td');
+          td.style.padding = '5px 10px';
+          td.style.textAlign = 'left'; // ← 這裡改成左對齊
+          
           const a = document.createElement('a');
           const rand = Math.random().toString(36).substring(2,7);
           a.href = `train.html?id=${id}_${String(j).padStart(2,'0')}&v=${rand}`;
           a.target = "_blank";
           a.textContent = `測資 ${j}`;
+          a.style.display = 'inline-block'; // 保持左右排列
+          
           td.appendChild(a);
-          td.style.padding = '5px 10px';
           tr.appendChild(td);
         }
 
