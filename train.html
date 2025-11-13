@@ -1478,8 +1478,8 @@ function runCode(){
 
     // 更新 currentId（確保全域一致）
 
-    //currentId = id;
-    currentId = id.split('_')[0];
+    currentId = id;
+    let id2 = id.split('_')[0];
     
 
 
@@ -1487,13 +1487,13 @@ function runCode(){
 
     const outputContent = document.getElementById("outputContent");
 
-    //outputContent.textContent = `目前題目 ID: ${id}\n`;
+    //outputContent.textContent = `目前題目 ID: ${id2}\n`;
 
 
 
     // 加 timestamp 防快取
 
-    const xmlPath = `set/${id}.xml?t=${Date.now()}`;
+    const xmlPath = `set/${id2}.xml?t=${Date.now()}`;
 
 
 
@@ -1690,6 +1690,7 @@ function closeDescModal() {
 
 
 </html>
+
 
 
 
