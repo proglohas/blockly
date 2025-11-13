@@ -126,7 +126,7 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
       // 題目欄 (col0)
       const titleTd = document.createElement('td');
       titleTd.textContent = `${id} - ${name}`;
-      titleTd.style.width = '200px'; // 固定寬度
+      titleTd.style.width = '300px'; // 固定寬度
       titleTd.style.whiteSpace = 'nowrap';
       titleTd.style.overflow = 'hidden';
       titleTd.style.textOverflow = 'ellipsis';
