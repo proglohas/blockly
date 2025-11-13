@@ -1478,8 +1478,9 @@ function runCode(){
 
     // 更新 currentId（確保全域一致）
 
-    currentId = id;
-
+    //currentId = id;
+    currentId = id.split('_')[0];
+    
 
 
     // 先把 ID 顯示到 Output panel
@@ -1689,6 +1690,7 @@ function closeDescModal() {
 
 
 </html>
+
 
 
 
