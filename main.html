@@ -112,41 +112,56 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
     const table = document.createElement('table');
     table.style.width = '100%';
     table.style.borderCollapse = 'collapse';
-    table.style.backgroundColor = '#ffffff';
     
     const problems = xml.getElementsByTagName('problem');
-    for(let i=0;i<problems.length;i++){
+    
+    const maxCols = 7;       // table 最多 7 欄
+    const startCol = 2;      // 題目名稱從第幾格開始 (1-based)
+    const maxPerRow = 5;     // 每列最多 5 個測資
+    
+    for(let i=0; i<problems.length; i++){
       const id = problems[i].getElementsByTagName('id')[0].textContent;
       const name = problems[i].getElementsByTagName('name')[0].textContent;
       const tsNode = problems[i].getElementsByTagName('ts')[0];
       const ts = tsNode ? parseInt(tsNode.textContent) : 1;
 
-      // 每題一行，第一欄放題目名稱
-      const tr = document.createElement('tr');
-      const tdTitle = document.createElement('td');
-      tdTitle.textContent = `${id} - ${name}`;
-      tdTitle.style.padding = '8px 5px';
-      tdTitle.style.verticalAlign = 'top';
-      tdTitle.style.fontWeight = 'bold';
-      tr.appendChild(tdTitle);
+      let rowCount = Math.ceil(ts / maxPerRow); // 需要幾列
+      for(let r=0; r<rowCount; r++){
+        const tr = document.createElement('tr');
 
-      // 剩下 5 個欄位放測資
-      for(let col=0; col<5; col++){
-        const td = document.createElement('td');
-        td.style.padding = '5px';
-        if(col < ts){
+        // 空 td 填充到題目名稱起始欄位
+        for(let s=1; s<startCol; s++){
+          const emptyTd = document.createElement('td');
+          tr.appendChild(emptyTd);
+        }
+
+        // 第一列放題目名稱，其他列留空
+        if(r===0){
+          const titleTd = document.createElement('td');
+          titleTd.textContent = `${id} - ${name}`;
+          titleTd.style.fontWeight = 'bold';
+          titleTd.style.padding = '5px 10px';
+          tr.appendChild(titleTd);
+        } else {
+          const emptyTd = document.createElement('td');
+          tr.appendChild(emptyTd);
+        }
+
+        // 本列測資
+        for(let j=r*maxPerRow+1; j<=Math.min((r+1)*maxPerRow, ts); j++){
+          const td = document.createElement('td');
           const a = document.createElement('a');
           const rand = Math.random().toString(36).substring(2,7);
-          a.href = `train.html?id=${id}_${String(col+1).padStart(2,'0')}&v=${rand}`;
+          a.href = `train.html?id=${id}_${String(j).padStart(2,'0')}&v=${rand}`;
           a.target = "_blank";
-          a.textContent = `測資 ${col+1}`;
-          a.style.display = 'inline-block';
+          a.textContent = `測資 ${j}`;
           td.appendChild(a);
+          td.style.padding = '5px 10px';
+          tr.appendChild(td);
         }
-        tr.appendChild(td);
-      }
 
-      table.appendChild(tr);
+        table.appendChild(tr);
+      }
     }
 
     listDiv.appendChild(table);
