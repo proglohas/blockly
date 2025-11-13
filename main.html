@@ -112,20 +112,31 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
     for(let i=0;i<problems.length;i++){
       const id = problems[i].getElementsByTagName('id')[0].textContent;
       const name = problems[i].getElementsByTagName('name')[0].textContent;
-      const a = document.createElement('a');
+      const tsNode = problems[i].getElementsByTagName('ts')[0];
+      const ts = tsNode ? parseInt(tsNode.textContent) : 1;
 
-      // 產生 5 碼亂數字串
-      const rand = Math.random().toString(36).substring(2, 7);
+      const titleDiv = document.createElement('div');
+      titleDiv.style.marginBottom = '10px';
+      titleDiv.innerHTML = `<strong>${id} - ${name}</strong>`;
+      
+      for(let j=1; j<=ts; j++){
+        const a = document.createElement('a');
+        const rand = Math.random().toString(36).substring(2,7);
+        a.href = `train.html?id=${id}_${String(j).padStart(2,'0')}&v=${rand}`;
+        a.target = "_blank";
+        a.textContent = `測資 ${j}`;
+        a.style.display = 'inline-block';
+        a.style.marginRight = '10px';
+        titleDiv.appendChild(a);
+      }
 
-      // 新視窗 + 避免快取
-      a.href = `train.html?id=${id}&v=${rand}`;
-      a.target = "_blank";
-
-      a.textContent = `${id} - ${name}`;
-      listDiv.appendChild(a);
+      listDiv.appendChild(titleDiv);
     }
   })
-  .catch(err => { console.error(err); document.getElementById('problemList').textContent='讀取錯誤'; });
+  .catch(err => { 
+    console.error(err); 
+    document.getElementById('problemList').textContent='讀取錯誤'; 
+  });
 </script>
 </body>
 </html>
