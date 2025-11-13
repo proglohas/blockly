@@ -2,34 +2,42 @@
 <problems>
   <problem>
     <id>a001</id>
+    <ts>1</ts>
     <name>Hello world</name>
   </problem>
   <problem>
     <id>a002</id>
+    <ts>1</ts>
     <name>簡易加法</name>
   </problem>
   <problem>
     <id>a004</id>
+    <ts>1</ts>
     <name>閏年判定</name>
   </problem>
   <problem>
     <id>a022</id>
+    <ts>1</ts>
     <name>迴文</name>
   </problem>
   <problem>
     <id>a024</id>
+    <ts>1</ts>
     <name>最大公因數</name>
   </problem>
   <problem>
     <id>a034</id>
+    <ts>1</ts>
     <name>二進位制轉換</name>
   </problem>
   <problem>
     <id>a104</id>
+    <ts>1</ts>
     <name>排序</name>
   </problem>
   <problem>
     <id>b969</id>
+    <ts>1</ts>
     <name>hello, everyone</name>
   </problem>
 </problems>
