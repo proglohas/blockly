@@ -68,16 +68,40 @@ h1 span.title-extra {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
 }
 
+/* *** 解決對齊和線條下陷的關鍵修改 *** */
+#problemList table {
+    width: 100%;
+    border-collapse: separate; /* <--- 邊界不合併，避免次像素渲染問題 */
+    border-spacing: 0;         /* <--- 確保單元格間沒有空隙 */
+    table-layout: fixed;
+}
+
 /* 題目連結樣式 & 統一高度的基礎樣式 */
-a, .placeholder { /* 讓 a 和新的佔位符樣式統一 */
+a, .placeholder {
     display: block;
-    padding: 10px 5px; /* <--- 讓 a/placeholder 決定高度和左右 padding */
+    padding: 10px 5px; /* <--- 讓 a/placeholder 決定統一高度和左右 padding */
     margin: 0;
     text-decoration: none;
     color: #333; /* 連結文字顏色 */
     transition: background-color 0.3s ease;
-    border-bottom: 1px solid #e0e0e0; /* 淡淡的灰色分隔線 */
+    border-bottom: none; /* <--- 移除內部分隔線，由 td 處理 */
 }
+
+/* 統一表格的單元格樣式 */
+#problemList table td {
+    vertical-align: top;
+    padding: 0; /* <--- 關鍵：將 td 的 padding 設為 0，讓 a/placeholder 決定間距 */
+    overflow: hidden;
+    text-align: left;
+    /* 由 td 承擔分隔線，解決線條下陷問題 */
+    border-bottom: 1px solid #e0e0e0; 
+}
+
+/* 處理最後一行的 td，移除它的底部分隔線 */
+#problemList tr:last-child td {
+    border-bottom: none;
+}
+/* *** 解決對齊和線條下陷的關鍵修改 結束 *** */
 
 /* 測資連結的顏色調整 */
 #problemList a {
@@ -90,21 +114,6 @@ a, .placeholder { /* 讓 a 和新的佔位符樣式統一 */
     font-weight: bold;
     color: #333;
     cursor: default; /* 讓題目名稱沒有手型游標 */
-}
-
-
-/* 統一表格的單元格樣式 */
-#problemList table td {
-    vertical-align: top;
-    padding: 0; /* <--- **關鍵**：將 padding 設為 0，讓 a/placeholder 決定間距 */
-    overflow: hidden;
-    text-align: left;
-}
-
-/* 移除最後一個元素底部的分隔線 - 必須針對 a/placeholder 處理 */
-#problemList tr:last-child a,
-#problemList tr:last-child .placeholder {
-    border-bottom: none;
 }
 
 a:hover {
@@ -136,7 +145,7 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
 
     const table = document.createElement('table');
     table.style.width = '100%';
-    table.style.borderCollapse = 'collapse';
+    // CSS 已經處理 border-collapse 和 border-spacing，這裡不需要 style.borderCollapse
     table.style.tableLayout = 'fixed'; // 固定欄寬
     listDiv.appendChild(table);
 
@@ -162,6 +171,7 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
 
       // 題目欄 - 使用 <a> 標籤來統一高度和分隔線
       const titleTd = document.createElement('td');
+      // 這裡不需要設定 style.verticalAlign 和 padding，因為已經被 CSS 統一處理
       titleTd.style.whiteSpace = 'nowrap';
       titleTd.style.textOverflow = 'ellipsis';
       
@@ -188,8 +198,8 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
           const placeholder = document.createElement('span');
           placeholder.classList.add('placeholder');
           placeholder.textContent = '\u00A0'; // 使用不換行空格佔位
-          placeholder.style.backgroundColor = 'transparent'; // 確保背景是透明的
-          placeholder.style.color = '#ccc'; // 可以讓佔位符的文字/空格隱藏或呈現灰色
+          placeholder.style.backgroundColor = 'transparent'; 
+          placeholder.style.color = 'transparent'; // 讓佔位符的內容完全隱藏
           placeholder.style.cursor = 'default';
           td.appendChild(placeholder);
         }
