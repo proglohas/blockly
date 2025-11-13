@@ -109,13 +109,14 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
     const listDiv = document.getElementById('problemList');
     listDiv.innerHTML = '';
 
-    // 建 table
     const table = document.createElement('table');
     table.style.width = '100%';
     table.style.borderCollapse = 'collapse';
-    
+    table.style.tableLayout = 'fixed'; // 固定欄寬
+    listDiv.appendChild(table);
+
     const problems = xml.getElementsByTagName('problem');
-    for (let i = 0; i < problems.length; i++) {
+    for(let i=0;i<problems.length;i++){
       const id = problems[i].getElementsByTagName('id')[0].textContent;
       const name = problems[i].getElementsByTagName('name')[0].textContent;
       const tsNode = problems[i].getElementsByTagName('ts')[0];
@@ -123,23 +124,25 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
 
       const tr = document.createElement('tr');
 
-      // 題目欄 (col0)
+      // 題目欄
       const titleTd = document.createElement('td');
-      titleTd.textContent = `${id} - ${name}`;
-      titleTd.style.width = '300px'; // 固定寬度
-      titleTd.style.whiteSpace = 'nowrap';
-      titleTd.style.overflow = 'hidden';
-      titleTd.style.textOverflow = 'ellipsis';
-      titleTd.style.padding = '5px 10px';
       titleTd.style.verticalAlign = 'top';
+      titleTd.style.padding = '5px';
+      titleTd.style.overflow = 'hidden';
+      titleTd.style.whiteSpace = 'nowrap';
+      titleTd.style.textOverflow = 'ellipsis';
+      titleTd.style.fontWeight = 'bold';
+      titleTd.textContent = `${id} - ${name}`;
+      titleTd.style.width = '30%'; // 題目欄寬度，可依需求調整
       tr.appendChild(titleTd);
 
-      // 測資欄 col1 ~ col6
-      for (let j = 1; j <= 6; j++) {
+      // 測資欄（最多 5 個）
+      for(let j=1;j<=5;j++){
         const td = document.createElement('td');
-        td.style.padding = '5px 10px';
+        td.style.verticalAlign = 'top';
+        td.style.padding = '5px';
         td.style.textAlign = 'left'; // 測資靠左
-        if (j <= ts) {
+        if(j <= ts){
           const a = document.createElement('a');
           const rand = Math.random().toString(36).substring(2,7);
           a.href = `train.html?id=${id}_${String(j).padStart(2,'0')}&v=${rand}`;
@@ -152,8 +155,6 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
 
       table.appendChild(tr);
     }
-
-    listDiv.appendChild(table);
   })
   .catch(err => { 
     console.error(err); 
