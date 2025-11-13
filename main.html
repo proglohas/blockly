@@ -108,6 +108,12 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
   .then(xml => {
     const listDiv = document.getElementById('problemList');
     listDiv.innerHTML = '';
+
+    const table = document.createElement('table');
+    table.style.width = '100%';
+    table.style.borderCollapse = 'collapse';
+    table.style.backgroundColor = '#ffffff';
+    
     const problems = xml.getElementsByTagName('problem');
     for(let i=0;i<problems.length;i++){
       const id = problems[i].getElementsByTagName('id')[0].textContent;
@@ -115,23 +121,35 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
       const tsNode = problems[i].getElementsByTagName('ts')[0];
       const ts = tsNode ? parseInt(tsNode.textContent) : 1;
 
-      const titleDiv = document.createElement('div');
-      titleDiv.style.marginBottom = '10px';
-      titleDiv.innerHTML = `<strong>${id} - ${name}</strong>`;
-      
-      for(let j=1; j<=ts; j++){
-        const a = document.createElement('a');
-        const rand = Math.random().toString(36).substring(2,7);
-        a.href = `train.html?id=${id}_${String(j).padStart(2,'0')}&v=${rand}`;
-        a.target = "_blank";
-        a.textContent = `測資 ${j}`;
-        a.style.display = 'inline-block';
-        a.style.marginRight = '10px';
-        titleDiv.appendChild(a);
+      // 每題一行，第一欄放題目名稱
+      const tr = document.createElement('tr');
+      const tdTitle = document.createElement('td');
+      tdTitle.textContent = `${id} - ${name}`;
+      tdTitle.style.padding = '8px 5px';
+      tdTitle.style.verticalAlign = 'top';
+      tdTitle.style.fontWeight = 'bold';
+      tr.appendChild(tdTitle);
+
+      // 剩下 5 個欄位放測資
+      for(let col=0; col<5; col++){
+        const td = document.createElement('td');
+        td.style.padding = '5px';
+        if(col < ts){
+          const a = document.createElement('a');
+          const rand = Math.random().toString(36).substring(2,7);
+          a.href = `train.html?id=${id}_${String(col+1).padStart(2,'0')}&v=${rand}`;
+          a.target = "_blank";
+          a.textContent = `測資 ${col+1}`;
+          a.style.display = 'inline-block';
+          td.appendChild(a);
+        }
+        tr.appendChild(td);
       }
 
-      listDiv.appendChild(titleDiv);
+      table.appendChild(tr);
     }
+
+    listDiv.appendChild(table);
   })
   .catch(err => { 
     console.error(err); 
