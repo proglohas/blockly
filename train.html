@@ -68,7 +68,7 @@ html, body {
     color: #1E90FF; /* 道奇藍 */
     font-size: 0.9em;
     font-weight: bold;
-    margin-left: 10px; 
+    margin-left: 20px; 
     
     /* 核心：如果空間不夠，Email 允許被壓縮或縮小字體 */
     flex-shrink: 1; /* 允許被擠壓 */
@@ -487,23 +487,16 @@ html, body {
 
 
 <div id="toolbar">
-
   <button onclick="exportXML()">匯出 XML</button>
-
   <button onclick="importXML()">匯入 XML</button>
-
   <button onclick="shareLink()">分享</button> 
-
   <button onclick="runCode()">執行程式碼</button>
-
   <button id="langButton" onclick="switchLanguage()">切換語言 (English)</button>
-
   <button onclick="showDescription()">題目說明</button>
-  <label for="testcaseSelector">測資：</label>
+  
   <select id="testcaseSelector" name="testcaseSelector" onchange="changeTestcase()"></select>
-  <span id="emailDisplay">proglohas@gmail.com</span>
+  <span id="emailDisplay" class="email-display">proglohas@gmail.com</span>
 </div>
-
 
 
 <div id="main">
@@ -1744,6 +1737,7 @@ function loadTestcases(id) {
 
 
 </html>
+
 
 
 
