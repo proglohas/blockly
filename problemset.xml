@@ -36,6 +36,11 @@
     <name>排序</name>
   </problem>
   <problem>
+    <id>c382</id>
+    <ts>4</ts>
+    <name>加減乘除</name>
+  </problem>
+  <problem>
     <id>b969</id>
     <ts>1</ts>
     <name>hello, everyone</name>
