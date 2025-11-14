@@ -500,7 +500,7 @@ html, body {
 
   <button onclick="showDescription()">題目說明</button>
   <label for="testcaseSelector">測資：</label>
-  <select id="testcaseSelector" name="testcaseSelector" onchange=""></select>
+  <select id="testcaseSelector" name="testcaseSelector" onchange="changeTestcase()"></select>
   <span id="emailDisplay">proglohas@gmail.com</span>
 </div>
 
@@ -1447,7 +1447,31 @@ function runCode(){
 
   }
 
-  
+  function changeTestcase() {
+    const select = document.getElementById("testcaseSelector");
+    let selected = select.value;
+
+    // 補零
+    selected = selected.padStart(2, '0');
+
+    // 清空 output
+    document.getElementById("outputContent").textContent = "程式執行結果將顯示在這裡...";
+
+    // 更新 input/ans
+    const ts = Date.now();
+    const inputPath = `set/${currentId}_${selected}.in?ts=${ts}`;
+    const ansPath   = `set/${currentId}_${selected}.out?ts=${ts}`;
+
+    fetch(inputPath, { cache: "no-store" })
+        .then(r => r.text())
+        .then(text => document.getElementById("inputContent").value = text.trimEnd())
+        .catch(console.error);
+
+    fetch(ansPath, { cache: "no-store" })
+        .then(r => r.text())
+        .then(text => document.getElementById("ansContent").value = text.trimEnd())
+        .catch(console.error);
+}
 
   function showDescription() {
 
@@ -1720,6 +1744,7 @@ function loadTestcases(id) {
 
 
 </html>
+
 
 
 
