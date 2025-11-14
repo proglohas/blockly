@@ -516,9 +516,10 @@ html, body {
 
     <div id="inputPanel" class="panel-section">
 
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 18px;">
             <div class="panel-caption">Input (每行視為一次輸入):</div>
-            <select id="testcaseSelector" onchange="">測資 #</select>
+            <label for="testcaseSelector">測資：</label>
+            <select id="testcaseSelector" name="testcaseSelector" onchange=""></select>
         </div>
         <textarea id="inputContent" placeholder="在此輸入程式所需的資料，每行一個值..." rows="5"></textarea>
 
@@ -1692,6 +1693,7 @@ function closeDescModal() {
 
 
 </html>
+
 
 
 
