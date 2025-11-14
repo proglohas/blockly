@@ -1599,7 +1599,7 @@ function loadTestcases(id) {
             // 填入 select
             const sel = document.getElementById("testcaseSelector");
             sel.innerHTML = ""; // 清空
-
+            alert(ts);
             for (let i = 1; i <= ts; i++) {
                 const op = document.createElement("option");
                 op.value = i;
@@ -1737,6 +1737,7 @@ function loadTestcases(id) {
 
 
 </html>
+
 
 
 
