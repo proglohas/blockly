@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Problem List</title>
+<style>
+/* 清爽淡藍的背景 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 30px;
+    background-color: #F0F8FF; /* 淡藍色 (AliceBlue) */
+    color: #333; /* 預設文字顏色 */
+    margin: 0;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #007bff; /* 標題顏色 */
+    border-bottom: 2px solid #007bff; /* 標題下方加強分隔線 */
+    padding-bottom: 10px;
+    /* 讓 h1 內容靠右對齊 */
+    text-align: right; 
+    /* 確保 h1 內容可以靠右對齊 (例如，如果內容是複合的) */
+    display: flex;
+    justify-content: space-between; /* 在左右兩邊放置元素 */
+    align-items: flex-end; /* 將內容放在底部，與分隔線對齊 */
+    flex-wrap: wrap; /* 避免在小螢幕上溢出 */
+}
+
+/* 確保主要的 "題目列表" 標題靠左 */
+h1 span.title-main {
+    text-align: left;
+    flex-grow: 1; /* 讓它佔用剩餘空間 */
+    color: #333; /* 可以選擇讓主標題使用深色以增加區分 */
+    font-size: 1.2em; /* 稍微小一點 */
+}
+
+/* 讓右側的資訊可以垂直排列 */
+h1 div.title-info {
+    text-align: right;
+    display: flex;
+    flex-direction: column; /* 垂直堆疊子元素 */
+    align-items: flex-end; /* 讓內部元素靠右對齊 */
+}
+
+/* proglohas@gmail.com 的樣式 */
+h1 span.title-email {
+    color: #555; /* 使用較柔和的顏色 */
+    font-size: 0.7em; /* 更小的字體 */
+    margin-bottom: 5px; /* 與下方的文字有一點間隔 */
+}
+
+/* 旭光高中練習用的樣式 */
+h1 span.title-extra {
+    color: #007bff; /* 使用主題色 */
+    font-size: 0.8em; /* 練習用文字小一點 */
+    font-weight: normal; /* 不加粗 */
+}
+
+
+#problemList {
+    background-color: #ffffff; /* 列表區域使用白色背景以增加對比 */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
+}
+/* 題目連結樣式 */
+a {
+    display: block;
+    padding: 10px 0;
+    margin: 0;
+    text-decoration: none;
+    color: #333; /* 連結文字顏色 */
+    transition: background-color 0.3s ease;
+    /* 淡淡的分隔線 */
+    border-bottom: 1px solid #e0e0e0; /* 淡淡的灰色分隔線 */
+}
+/* 移除最後一個元素底部的分隔線 */
+a:last-child {
+    border-bottom: none;
+}
+a:hover {
+    text-decoration: none;
+    background-color: #e6f7ff; /* 滑鼠移上時使用更淡的藍色背景 */
+    color: #0056b3; /* 滑鼠移上時變深藍色 */
+}
+</style>
+</head>
+<body>
+
+<h1>
+    <span class="title-main">題目列表</span>
+    <div class="title-info">
+        <span class="title-email">proglohas@gmail.com</span>
+        <span class="title-extra">旭光高中 / 草屯國中  練習網站</span>
+    </div>
+</h1>
+
+<div id="problemList">Loading...</div>
+
+<script>
+fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
+  .then(resp => resp.text())
+  .then(str => (new DOMParser()).parseFromString(str,"text/xml"))
+  .then(xml => {
+    const listDiv = document.getElementById('problemList');
+    listDiv.innerHTML = '';
+    const problems = xml.getElementsByTagName('problem');
+    for(let i=0;i<problems.length;i++){
+      const id = problems[i].getElementsByTagName('id')[0].textContent;
+      const name = problems[i].getElementsByTagName('name')[0].textContent;
+      const a = document.createElement('a');
+
+      // 產生 5 碼亂數字串
+      const rand = Math.random().toString(36).substring(2, 7);
+
+      // 新視窗 + 避免快取
+      a.href = `train.html?id=${id}&v=${rand}`;
+      a.target = "_blank";
+
+      a.textContent = `${id} - ${name}`;
+      listDiv.appendChild(a);
+    }
+  })
+  .catch(err => { console.error(err); document.getElementById('problemList').textContent='讀取錯誤'; });
+</script>
+</body>
+</html>
