@@ -4,45 +4,54 @@
     <id>a001</id>
     <ts>2</ts>
     <name>Hello world</name>
+    <cato>1</cato>
   </problem>
   <problem>
     <id>a002</id>
     <ts>1</ts>
     <name>簡易加法</name>
+    <cato>1</cato>
   </problem>
   <problem>
     <id>a004</id>
     <ts>1</ts>
     <name>閏年判定</name>
+    <cato>1</cato>
   </problem>
   <problem>
     <id>a022</id>
     <ts>1</ts>
     <name>迴文</name>
+    <cato>1</cato>
   </problem>
   <problem>
     <id>a024</id>
     <ts>1</ts>
     <name>最大公因數</name>
+    <cato>1</cato>
   </problem>
   <problem>
     <id>a034</id>
     <ts>1</ts>
     <name>二進位制轉換</name>
+    <cato>1</cato>
   </problem>
   <problem>
     <id>a104</id>
     <ts>2</ts>
     <name>排序</name>
+    <cato>1</cato>
   </problem>
   <problem>
     <id>c382</id>
     <ts>4</ts>
     <name>加減乘除</name>
+    <cato>1</cato>
   </problem>
   <problem>
     <id>b969</id>
     <ts>1</ts>
     <name>hello, everyone</name>
+    <cato>1</cato>
   </problem>
 </problems>
