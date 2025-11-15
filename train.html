@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Blockly IDE</title>
+<title>David's Blockly Lab</title>
 <script src="https://unpkg.com/blockly/blockly.min.js"></script>
 <script src="https://unpkg.com/@blockly/blockly/javascript_compressed.js"></script>
 <style>
@@ -62,10 +62,7 @@ html, body {
     transition: none;
 }
 
-
-
 /* 拖曳分割線 (水平) */
-
 #resizer {
     width: 6px;
     height: 100%;
@@ -82,8 +79,6 @@ html, body {
     height: 100%;
     min-width: 100px;
 }
-
-
 
 /* 右側：上下子視窗的共同樣式 */
 .panel-section {
@@ -111,8 +106,6 @@ html, body {
     background-color: #f8f8f8;
     height: 33%; 
 }
-
-
 
 /* 下半部：Output (重要：設定 flex-grow 和初始 height) */
 #outputPanel {
@@ -167,16 +160,12 @@ html, body {
     resize: none; 
 }
 
-
-
 #outputContent {
     flex-grow: 1;
     background-color: transparent;
     border: none;
     padding: 0;
 }
-
-
 
 /* **【Modal 樣式】** */
 /* 整個遮罩 */
@@ -222,8 +211,6 @@ html, body {
     align-items: center;
     z-index: 1000;
 }
-
-
 
 #modalContent {
     background: white;
@@ -281,171 +268,83 @@ html, body {
 </div>
 
 <div id="main">
-
   <div id="blocklyDiv"></div>
-
   <div id="resizer"></div>
-
-  
-
   <div id="rightPanel">
-
     <div id="inputPanel" class="panel-section">
         <div class="panel-caption">Input (每行視為一次輸入):</div>
-        
-        <textarea id="inputContent" placeholder="在此輸入程式所需的資料，每行一個值..." rows="5"></textarea>
-
+           <textarea id="inputContent" placeholder="在此輸入程式所需的資料，每行一個值..." rows="5"></textarea>
     </div>
-
-    
-
     <div id="v-resizer"></div> 
-
-
-
     <div id="ansPanel" class="panel-section">
-
         <div class="panel-caption">Answer (標準答案):</div>
-
         <textarea id="ansContent" placeholder="" rows="5"></textarea>
-
     </div>
 
-
-
-
-
     <div id="v-resizer"></div> 
-
-
 
     <div id="outputPanel" class="panel-section">
-
         <div class="panel-caption">Output:</div>
-
         <pre id="outputContent">程式執行結果將顯示在這裡...</pre>
-
     </div>
-
   </div>
-
 </div>
-
-  
 
 <div id="shareModal" style="display: none;">
-
     <div id="modalContent">
-
         <h3>🎉 專案分享連結</h3>
-
         <p>此連結包含您的 Blockly 專案內容。**請注意：** 若要讓此連結對他人有效，您必須將此 HTML 檔案發佈到網站伺服器 (Server) 上。</p>
-
         <input type="text" id="shareUrlInput" readonly>
-
         <div class="modal-buttons">
-
             <button onclick="copyShareUrl()">複製連結</button>
-
             <button onclick="closeModal()">關閉</button>
-
         </div>
-
         <p style="font-size:0.85em; margin-top:15px; color:#c00;">[本地文件警告] 如果您直接從本地文件（例如 C:\）開啟此檔案，分享連結將會無效！</p>
-
     </div>
-
 </div>
-
-
 
 <div id="descModal" style="display:none;">
-
     <div class="modal-content">
-
         <h2 id="descTitle"></h2>
-
         <pre id="descText"></pre>
-
         <button onclick="closeDescModal()" style="margin-top:10px;">關閉</button>
-
     </div>
-
 </div>
-
-    
-
-
-
-    
 
 <script>
 
   // **【全域變數】**
-
   let currentId = null;
-
   let workspace;
-
   let currentLanguage = 'zh-hant';
-
   let isResizing = false;
-
   let lastBlocklyWidth = '0 0 70%';
 
-
-
   const langButton = document.getElementById('langButton');
-
   const main = document.getElementById('main');
-
   const blocklyDiv = document.getElementById('blocklyDiv');
-
   const outputContent = document.getElementById('outputContent');
-
   const inputContent = document.getElementById('inputContent');
 
-
-
   // **XML 兼容性修復** (保持不變)
-
   if (Blockly.utils && Blockly.utils.xml) {
-
     Blockly.Xml = {
-
       domToText: Blockly.utils.xml.domToText,
-
       domToPrettyText: Blockly.utils.xml.domToPrettyText,
-
       textToDom: Blockly.utils.xml.textToDom,
-
       domToWorkspace: Blockly.Xml.domToWorkspace,
-
       workspaceToDom: Blockly.Xml.workspaceToDom
-
     };
-
   }
 
-  
-
   // **工具箱定義 (加入顏色屬性)**
-
   function getToolbox(lang) {
-
     const categories = {
-
       'zh-hant': ['邏輯', '迴圈', '數學', '文字', '清單', '變數', '函式'],
-
       'en': ['Logic', 'Loops', 'Math', 'Text', 'Lists', 'Variables', 'Functions']
-
     };
 
-    
-
     const langNames = categories[lang] || categories['zh-hant'];
-
-
 
     return {
 
@@ -1215,3 +1114,4 @@ function goToHomepage() {
 </script>
 </body>
 </html>
+
