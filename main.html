@@ -23,9 +23,7 @@ h1 {
     color: #007bff; /* 標題顏色 */
     border-bottom: 2px solid #007bff; /* 標題下方加強分隔線 */
     padding-bottom: 10px;
-    /* 讓 h1 內容靠右對齊 */
     text-align: right; 
-    /* 確保 h1 內容可以靠右對齊 (例如，如果內容是複合的) */
     display: flex;
     justify-content: space-between; /* 在左右兩邊放置元素 */
     align-items: flex-end; /* 將內容放在底部，與分隔線對齊 */
@@ -35,54 +33,75 @@ h1 {
 /* 確保主要的 "題目列表" 標題靠左 */
 h1 span.title-main {
     text-align: left;
-    flex-grow: 1; /* 讓它佔用剩餘空間 */
-    color: #333; /* 可以選擇讓主標題使用深色以增加區分 */
-    font-size: 1.2em; /* 稍微小一點 */
+    flex-grow: 1; 
+    color: #333; 
+    font-size: 1.2em; 
 }
 
 /* 讓右側的資訊可以垂直排列 */
 h1 div.title-info {
     text-align: right;
     display: flex;
-    flex-direction: column; /* 垂直堆疊子元素 */
-    align-items: flex-end; /* 讓內部元素靠右對齊 */
+    flex-direction: column; 
+    align-items: flex-end; 
 }
 
 /* proglohas@gmail.com 的樣式 */
 h1 span.title-email {
-    color: #555; /* 使用較柔和的顏色 */
-    font-size: 0.7em; /* 更小的字體 */
-    margin-bottom: 5px; /* 與下方的文字有一點間隔 */
+    color: #555; 
+    font-size: 0.7em; 
+    margin-bottom: 5px; 
 }
 
 /* 旭光高中練習用的樣式 */
 h1 span.title-extra {
-    color: #007bff; /* 使用主題色 */
-    font-size: 0.8em; /* 練習用文字小一點 */
-    font-weight: normal; /* 不加粗 */
+    color: #007bff; 
+    font-size: 0.8em; 
+    font-weight: normal; 
 }
 
-/* --- 新增/修改：分類框架樣式 --- */
+/* --- 分欄佈局核心樣式 (Grid 2 欄) --- */
 
-/* 新增：樣式化每個分類框架 */
-.problem-list-frame {
-    background-color: #ffffff;
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* 較輕的陰影 */
-    margin-bottom: 30px; /* 每個框架之間留出間隔 */
-    border: 1px solid #e0e0e0; /* 加上淺色邊框 */
+#problemListContainer {
+    display: grid;
+    /* 預設兩欄佈局，每欄均分空間 */
+    grid-template-columns: repeat(2, 1fr); 
+    /* 設置欄與欄、行與行之間的間隔 */
+    gap: 30px; 
 }
+
+/* 響應式調整 (讓小螢幕回到單欄) */
+@media (max-width: 992px) {
+    #problemListContainer {
+        grid-template-columns: 1fr; /* 小螢幕恢復單欄 */
+        gap: 0;
+    }
+    /* 恢復單欄時，在每個分類群組下方增加間距，使其分開 */
+    .category-group {
+        margin-bottom: 30px; 
+    }
+}
+
+/* --- 內部元素樣式 --- */
 
 /* 樣式化新增的分類標題 */
 #problemListContainer h2 {
     color: #007bff; /* 使用主題色 */
     border-bottom: 2px solid #a3ccff; /* 淺藍色分隔線 */
     padding-bottom: 5px;
-    margin-top: 30px;
+    margin-top: 0; /* 貼齊 category-group 頂部 */
     margin-bottom: 10px; /* 標題與列表框架之間的間隔 */
     font-size: 1.5em;
     font-weight: 600;
+}
+
+/* 列表框架樣式 */
+.problem-list-frame {
+    background-color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* 輕微陰影 */
+    border: 1px solid #e0e0e0; /* 加上淺色邊框 */
 }
 
 /* 題目連結樣式 */
@@ -91,10 +110,10 @@ a {
     padding: 10px 0;
     margin: 0;
     text-decoration: none;
-    color: #333; /* 連結文字顏色 */
+    color: #333; 
     transition: background-color 0.3s ease;
     /* 淡淡的分隔線 */
-    border-bottom: 1px solid #e0e0e0; /* 淡淡的灰色分隔線 */
+    border-bottom: 1px solid #e0e0e0; 
 }
 /* 移除每個框架內最後一個元素底部的分隔線 */
 .problem-list-frame a:last-child {
@@ -102,8 +121,8 @@ a {
 }
 a:hover {
     text-decoration: none;
-    background-color: #e6f7ff; /* 滑鼠移上時使用更淡的藍色背景 */
-    color: #0056b3; /* 滑鼠移上時變深藍色 */
+    background-color: #e6f7ff; 
+    color: #0056b3; 
 }
 </style>
 </head>
@@ -119,17 +138,30 @@ a:hover {
 
 <div id="problemListContainer">
     
-    <h2>基礎題庫</h2>
-    <div id="problemList_1" class="problem-list-frame">Loading...</div>
+    <div class="category-group">
+        <h2>基礎題庫</h2>
+        <div id="problemList_1" class="problem-list-frame">Loading...</div>
+    </div>
     
-    <h2>競賽題庫</h2>
-    <div id="problemList_2" class="problem-list-frame">Loading...</div>
+    <div class="category-group">
+        <h2>競賽題庫</h2>
+        <div id="problemList_2" class="problem-list-frame">Loading...</div>
+    </div>
     
-    <h2>UVA 題庫</h2>
-    <div id="problemList_3" class="problem-list-frame">Loading...</div>
+    <div class="category-group">
+        <h2>UVA 題庫</h2>
+        <div id="problemList_3" class="problem-list-frame">Loading...</div>
+    </div>
     
-    <h2>不分類 / 其他</h2>
-    <div id="problemList_0" class="problem-list-frame">Loading...</div>
+    <div class="category-group">
+        <h2>第四類別</h2>
+        <div id="problemList_4" class="problem-list-frame">Loading...</div>
+    </div>
+
+    <div class="category-group">
+        <h2>不分類 / 其他</h2>
+        <div id="problemList_0" class="problem-list-frame">Loading...</div>
+    </div>
 
 </div>
 
@@ -139,15 +171,17 @@ const categories = {
     '1': 'problemList_1', // 基礎題庫
     '2': 'problemList_2', // 競賽題庫
     '3': 'problemList_3', // UVA 題庫
+    '4': 'problemList_4', // 第四類別
     '0': 'problemList_0', // 不分類 / 其他 (預設)
 };
 
-// 處理初始化畫面，清除 "Loading..." 文字
+// 處理初始化畫面，清除所有列表中的 "Loading..." 文字
 Object.values(categories).forEach(id => {
     const el = document.getElementById(id);
     if (el) el.innerHTML = '';
 });
 
+// 使用 fetch 讀取 XML 檔案
 fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
   .then(resp => resp.text())
   .then(str => (new DOMParser()).parseFromString(str,"text/xml"))
@@ -156,16 +190,16 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
 
     for(let i=0;i<problems.length;i++){
       const problem = problems[i];
+      // 讀取 ID 和 NAME
       const id = problem.getElementsByTagName('id')[0].textContent;
       const name = problem.getElementsByTagName('name')[0].textContent;
       
-      // *** 讀取 cato 值 ***
+      // 讀取 cato 值
       let catoNode = problem.getElementsByTagName('cato')[0];
-      // 如果 cato 存在，取其內容，否則預設為 '0' (不分類)
+      // 如果 cato 存在，取其內容，否則預設為 '0'
       let cato = catoNode ? catoNode.textContent.trim() : '0';
       
-      // 根據 cato 值決定要附加到哪一個容器
-      // 如果 cato 不在 categories 列表中，也導向 '0'
+      // 根據 cato 取得目標容器 ID
       const targetListId = categories[cato] || categories['0']; 
       const listDiv = document.getElementById(targetListId);
       
@@ -176,10 +210,10 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
       
       const a = document.createElement('a');
 
-      // 產生 5 碼亂數字串
+      // 產生 5 碼亂數字串，用於避免快取
       const rand = Math.random().toString(36).substring(2, 7);
 
-      // 新視窗 + 避免快取
+      // 設置連結屬性
       a.href = `train.html?id=${id}&v=${rand}`;
       a.target = "_blank";
 
