@@ -54,4 +54,12 @@
     <name>hello, everyone</name>
     <cato>1</cato>
   </problem>
+
+  <problem>
+    <id>b968</id>
+    <ts>4</ts>
+    <name>K-I-S-S-I-N-G</name>
+    <cato>0</cato>
+  </problem>
+  
 </problems>
