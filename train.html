@@ -195,8 +195,26 @@ html, body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
+/* **【Modal 內部結構間距優化】** */
+
+/* 1. 調整標題 (#descTitle) 的間距 */
+#descModal #descTitle {
+    /* 移除標題上方的預設 margin，讓它更靠近 modal-content 的頂部 padding (10px) */
+    margin-top: 0; 
+    /* 減少標題下方的 margin，縮小與描述文本的間距 */
+    margin-bottom: 8px; /* 可以根據視覺效果調整 */
+    font-size: 1.4em; /* 保持標題的層級感，但您可以調整大小 */
+}
+
+/* 2. 調整描述文本 (#descText) 的間距 */
 #descModal #descText {
-    white-space: pre-wrap;
+    white-space: pre-wrap; /* 保持原有的換行設定 */
+    /* 移除 <pre> 標籤上方的預設 margin，讓它緊接在標題下方 */
+    margin-top: 0; 
+    /* 移除 <pre> 標籤下方的預設 margin */
+    margin-bottom: 0; 
+    /* 確保文本內容有足夠空間 */
+    padding: 5px 0; /* 可以在不使用 margin 時，用 padding 稍微調整內距 */
 }
     
 #shareModal {
@@ -878,6 +896,7 @@ function goToHomepage() {
 </script>
 </body>
 </html>
+
 
 
 
