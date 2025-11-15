@@ -488,6 +488,7 @@ html, body {
 
 
 <div id="toolbar">
+  <button onclick="goToHomepage()">回到首頁</button>
   <button onclick="exportXML()">匯出 XML</button>
   <button onclick="importXML()">匯入 XML</button>
   <button onclick="shareLink()">分享</button> 
@@ -1120,325 +1121,152 @@ function judgeOutput(userLines, answerText){
     
 
   // **執行程式碼：實現 Readline 和 Print** (保持不變)
-
 function runCode(){
-
     outputContent.textContent = "執行中...\n";
-
-
-
     let inputLines = inputContent.value.split('\n')
-
                                       .map(line => line.trimEnd());
-
     let inputIndex = 0;
-
     const startTime = performance.now();
-
-
-
     let collectedOutput = [];
 
-
-
     // ✅ 收集 console.log()（Blockly text_print 主要用這個）
-
     const originalConsoleLog = console.log;
-
     console.log = function(msg){
-
         msg = String(msg);
-
         collectedOutput.push(msg);
-
         outputContent.textContent += msg + "\n";
-
     };
-
-
 
     // ✅ 收集 alert()
-
     const customAlert = (msg) => {
-
         msg = String(msg);
-
         collectedOutput.push(msg);
-
         outputContent.textContent += msg + "\n";
-
     };
-
-
 
     const customPrompt = (msg, defaultValue) => {
-
         if (inputIndex < inputLines.length) return inputLines[inputIndex++];
-
         return defaultValue === undefined ? null : defaultValue;
-
     };
-
-
 
     const originalAlert = window.alert;
-
     const originalPrompt = window.prompt;
-
     window.alert = customAlert;
-
     window.prompt = customPrompt;
-
-
-
     try {
-
         const code = Blockly.JavaScript.workspaceToCode(workspace);
-
         eval(code);
-
         outputContent.textContent += "\n--- 程式執行完畢 ---\n";
-
     }
-
     catch(e){
-
         outputContent.textContent += "\n\n!!! 程式執行錯誤:\n" + e + "\n";
-
     }
-
     finally {
-
         window.alert = originalAlert;
-
         window.prompt = originalPrompt;
-
         console.log = originalConsoleLog;
-
-
-
         const endTime = performance.now();
-
         const elapsed = ((endTime - startTime) / 1000).toFixed(4);
-
-
-
         // ✅ 這次會有 output 了
-
         judgeOutput(collectedOutput, ansContent.value);
-
-
-
         outputContent.textContent += `⏱ 執行時間：${elapsed} 秒\n`;
-
     }
-
 }
-
-
-
-  
 
   // **Modal 相關函數** (保持不變)
-
   function openModal(url) {
-
       document.getElementById('shareUrlInput').value = url;
-
       document.getElementById('shareModal').style.display = 'flex';
-
   }
-
-
 
   function closeModal() {
-
       document.getElementById('shareUrlInput').value = '';
-
       document.getElementById('shareModal').style.display = 'none';
-
   }
-
-
 
   function copyShareUrl() {
-
       const urlInput = document.getElementById('shareUrlInput');
-
       urlInput.select();
-
       urlInput.setSelectionRange(0, 99999);
-
-      
-
       try {
-
           navigator.clipboard.writeText(urlInput.value)
-
               .then(() => {
-
                   alert("連結已複製到剪貼簿！");
-
               })
-
               .catch(err => {
-
                   console.error("複製到剪貼簿失敗:", err);
-
                   alert("複製失敗，請手動選取並複製視窗中的連結。");
-
               });
-
       } catch (err) {
-
           document.execCommand('copy');
-
           alert("連結已複製到剪貼簿！");
-
       }
-
   }
-
-  
 
   // **分享連結** (保持不變)
-
   function shareLink() {
-
     if (!workspace) return alert("工作區尚未載入，無法分享。");
-
-
-
     // 先嘗試從 URL 取得 id
-
     const params = new URLSearchParams(window.location.search);
-
     let id = params.get("id");
-
-
-
     // 如果 URL 沒有 id，就從全域 currentId 取得
-
     if (!id && typeof currentId !== "undefined") {
-
         id = currentId;
-
     }
-
-
 
     // 將 Blockly Workspace 轉成 XML
-
     const xmlDom = Blockly.Xml.workspaceToDom(workspace);
-
     const xmlText = Blockly.Xml.domToText(xmlDom);
-
-
-
     // base64 編碼
-
     const encoded = btoa(xmlText);
-
-
-
     // 建立完整分享連結
-
     const idParam = id ? `?id=${id}` : "";
-
     const url = location.origin + location.pathname + idParam + "#xml=" + encoded;
-
-
-
     openModal(url);
-
 }
 
-
-
   // 匯出 XML (保持不變)
-
   function exportXML(){
-
     if (!workspace) return alert("工作區尚未載入。");
-
     const xmlDom = Blockly.Xml.workspaceToDom(workspace);
-
     const serializer = new XMLSerializer();
-
     let xmlText = serializer.serializeToString(xmlDom);
-
     if (xmlText.length > 0 && Blockly.Xml && Blockly.Xml.domToPrettyText) {
-
         try { xmlText = Blockly.Xml.domToPrettyText(xmlDom); } 
-
         catch(e) { console.warn("使用 domToPrettyText 失敗:", e); }
-
     }
-
     const blob = new Blob([xmlText],{type:"text/xml"});
-
     const a = document.createElement("a");
-
     a.href = URL.createObjectURL(blob);
-
     a.download = "blockly.xml";
-
     a.click();
-
     URL.revokeObjectURL(a.href);
-
   }
 
-
-
   // 匯入 XML (保持不變)
-
   function importXML() {
-
     const input = document.createElement("input");
-
     input.type = "file";
-
     input.accept = ".xml";
-
     input.onchange = e => {
-
       const file = e.target.files[0];
-
       if (!file) return;
-
       file.text().then(text => {
-
         try {
-
           const dom = Blockly.Xml.textToDom(text);
-
           workspace.clear();
-
           Blockly.Xml.domToWorkspace(dom, workspace);
-
           alert("匯入成功！");
-
         } catch(err) {
-
           console.error(err);
-
           alert("匯入失敗：XML 無效\n" + err);
-
         }
-
       }).catch(err => {
-
         console.error(err);
-
         alert("讀取檔案失敗：" + err);
-
       });
-
     };
-
     input.click();
-
   }
 
   function changeTestcase() {
@@ -1468,118 +1296,55 @@ function runCode(){
 }
 
   function showDescription() {
-
     // 取得 URL id
-
     const params = new URLSearchParams(window.location.search);
-
     let id = params.get("id");
-
-
-
     // URL 沒有 id → 用 currentId
-
     if (!id) id = currentId;
-
-
-
     // 兩個都沒有 → 無法讀題目
-
     if (!id) {
-
         alert("沒有題目 ID！");
-
         return;
-
     }
 
-
-
     // 更新 currentId（確保全域一致）
-
     currentId = id;
     let id2 = id.split('_')[0];
-    
-
-
     // 先把 ID 顯示到 Output panel
-
     const outputContent = document.getElementById("outputContent");
-
     //outputContent.textContent = `目前題目 ID: ${id2}\n`;
-
-
-
     // 加 timestamp 防快取
-
     const xmlPath = `set/${id2}.xml?t=${Date.now()}`;
-
-
-
     fetch(xmlPath)
-
         .then(res => {
-
             if (!res.ok) throw new Error("XML 讀取失敗");
-
             //outputContent.textContent += "讀取 XML 成功！\n";
-
             return res.text();
-
         })
 
         .then(str => (new DOMParser()).parseFromString(str, "text/xml"))
-
         .then(xml => {
-
             const titleNode = xml.querySelector("title");
-
             const descNode  = xml.querySelector("description");
-
-
-
             const title = titleNode ? titleNode.textContent.trim() : "（無標題）";
-
             const desc  = descNode ? descNode.textContent.trim() : "（無說明）";
-
-
-
             //outputContent.textContent += `標題: ${title}\n說明:\n${desc}\n`;
-
-
-
             // 顯示 descModal
-
             document.getElementById("descTitle").innerText = title;
-
             document.getElementById("descText").innerText  = desc;
-
             document.getElementById("descModal").style.display = "flex";
-
         })
-
         .catch(err => {
-
             console.error(err);
-
             //outputContent.textContent += "讀取 XML 失敗！\n";
-
             alert("讀取題目說明失敗！");
-
         });
-
 }
-
-
 
 // 關閉 Modal
-
 function closeDescModal() {
-
     document.getElementById("descModal").style.display = "none";
-
 }
-
 
 function loadTestcases(id) {
     fetch("problemset.xml?ts=" + Date.now(), { cache: "no-store" })
@@ -1596,7 +1361,6 @@ function loadTestcases(id) {
                     break;
                 }
             }
-
             const sel = document.getElementById("testcaseSelector");
             sel.innerHTML = ""; // 清空
             //alert(ts);
@@ -1610,133 +1374,69 @@ function loadTestcases(id) {
         .catch(console.error);
 }
 
-
   function loadIOFromId() {
-
     const params = new URLSearchParams(window.location.search);
-
-    
-
     // ✅ 優先用 URL 的 id（因為每題都是用 train.html?id=xxxx 開啟）
-
     let id = params.get("id");
-
-
-
     // ✅ 如果 URL 沒有 id，就用之前的 currentId（例如題目切換）
-
     if (!id) id = currentId;
-
-
-
     // ✅ 如果兩個都沒有 → 結束
-
     if (!id) return;
-
-
-
     // ✅ 最終把 currentId 更新成最新 id
-
     currentId = id;
-
     // ⭐ 依題號載入測資數量
     loadTestcases(id);
-
     const ts = Date.now();
-
     const inputPath = `set/${id}_01.in?ts=${ts}`;
-
     const ansPath   = `set/${id}_01.out?ts=${ts}`;
 
-
-
     fetch(inputPath, { cache: "no-store" })
-
         .then(r => r.text())
-
         .then(text => document.getElementById("inputContent").value = text.trimEnd())
-
         .catch(console.error);
 
-
-
-    fetch(ansPath, { cache: "no-store" })
-
+      fetch(ansPath, { cache: "no-store" })
         .then(r => r.text())
-
         .then(text => document.getElementById("ansContent").value = text.trimEnd())
-
         .catch(console.error);
-
 }
-
-
-
+    
   window.onload = () => {
-
     enableResize();   // 啟用左右寬度拖曳
-
     enableVResize();  // 啟用上下高度拖曳
-
     loadLanguage('zh-hant'); // 初始化 Blockly 語言
-
-
-
     // 解析 URL
-
     const params = new URLSearchParams(window.location.search);
-
     currentId = params.get("id") || currentId;
-
-
-
     // 🚀 自動載入 Input/Answer（如果有 id）
-
     if (currentId) loadIOFromId();
 
-
-
     // 從 URL hash 載入 XML（覆蓋現有工作區）
-
     if (location.hash.startsWith("#xml=")) {
-
         setTimeout(() => {
-
             if (!workspace) return;
-
             const encoded = location.hash.slice(5);
-
             try {
-
                 const xmlText = atob(encoded);
-
                 const dom = Blockly.Xml.textToDom(xmlText);
-
                 Blockly.Xml.domToWorkspace(dom, workspace);
-
             } catch (err) {
-
                 console.error("URL XML 無效", err);
-
             }
-
         }, 500); // 等 Blockly 初始化完成
-
     }
 
 };
 
-
-
+function goToHomepage() {
+        // 將瀏覽器導向到特定的 URL
+        window.location.href = "https://proglohas.github.io/blockly/main.html";
+}
+    
 </script>
-
-
-
 </body>
-
-
-
 </html>
+
 
 
 
