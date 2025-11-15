@@ -347,451 +347,215 @@ html, body {
     const langNames = categories[lang] || categories['zh-hant'];
 
     return {
-
       "kind": "categoryToolbox",
-
       "contents": [
-
         {"kind": "category", "name": langNames[0], "colour": "210", "contents": [ /* 邏輯 (藍) */
-
           {"kind":"block","type":"controls_if"}, {"kind":"block","type":"logic_compare"},
-
           {"kind":"block","type":"logic_operation"}, {"kind":"block","type":"logic_boolean"},
-
           {"kind":"block","type":"logic_negate"}, {"kind":"block","type":"logic_null"},
-
           {"kind":"block","type":"logic_ternary"}
-
         ]},
-
         {"kind": "category", "name": langNames[1], "colour": "120", "contents": [ /* 迴圈 (綠) */
-
           {"kind":"block","type":"controls_repeat_ext"}, {"kind":"block","type":"controls_whileUntil"},
-
           {"kind":"block","type":"controls_for"}, {"kind":"block","type":"controls_forEach"},
-
           {"kind":"block","type":"controls_flow_statements"}
-
         ]},
-
         {"kind": "category", "name": langNames[2], "colour": "230", "contents": [ /* 數學 (深藍) */
-
           {"kind":"block","type":"math_number"}, {"kind":"block","type":"math_arithmetic"},
-
           {"kind":"block","type":"math_single"}, {"kind":"block","type":"math_trig"},
-
           {"kind":"block","type":"math_constant"}, {"kind":"block","type":"math_number_property"},
-
           {"kind":"block","type":"math_round"}, {"kind":"block","type":"math_on_list"},
-
           {"kind":"block","type":"math_modulo"}, {"kind":"block","type":"math_constrain"},
-
           {"kind":"block","type":"math_random_int"}, {"kind":"block","type":"math_random_float"},
-
           {"kind":"block","type":"math_atan2"}
-
         ]},
-
         {"kind": "category", "name": langNames[3], "colour": "160", "contents": [ /* 文字 (青) */
-
           {"kind":"block","type":"text"}, {"kind":"block","type":"text_join"},
-
           {"kind":"block","type":"text_append"}, {"kind":"block","type":"text_length"},
-
           {"kind":"block","type":"text_isEmpty"}, {"kind":"block","type":"text_indexOf"},
-
           {"kind":"block","type":"text_charAt"}, {"kind":"block","type":"text_getSubstring"},
-
           {"kind":"block","type":"text_changeCase"}, {"kind":"block","type":"text_trim"},
-
           {"kind":"block","type":"text_print"}, 
-
           {"kind":"block","type":"text_prompt_ext"}
-
         ]},
-
         {"kind": "category", "name": langNames[4], "colour": "300", "contents": [ /* 清單 (紫) */
-
           {"kind":"block","type":"lists_create_with"}, {"kind":"block","type":"lists_repeat"},
-
           {"kind":"block","type":"lists_length"}, {"kind":"block","type":"lists_isEmpty"},
-
           {"kind":"block","type":"lists_indexOf"}, {"kind":"block","type":"lists_getIndex"},
-
           {"kind":"block","type":"lists_setIndex"}, {"kind":"block","type":"lists_getSublist"},
-
           {"kind":"block","type":"lists_split"}, {"kind":"block","type":"lists_sort"}
-
         ]},
-
         {"kind": "category", "name": langNames[5], "colour": "330", "custom": "VARIABLE"}, /* 變數 (紅) */
-
         {"kind": "category", "name": langNames[6], "colour": "290", "custom": "PROCEDURE"} /* 函式 (深紫) */
-
       ]
-
     };
-
   }
 
-
-
   // **載入語言/工作區 (已更新 Zoom 配置)**
-
   function loadLanguage(languageCode) {
-
     currentLanguage = languageCode;
-
     let xmlText = '';
-
-    
-
     if (workspace) {
-
         const xml = Blockly.Xml.workspaceToDom(workspace);
-
         xmlText = Blockly.Xml.domToText(xml);
-
         workspace.dispose();
-
     }
 
-    
-
     const oldScript = document.getElementById('langScript');
-
     if (oldScript) oldScript.remove();
 
-    
-
     const script = document.createElement('script');
-
     script.src = `https://unpkg.com/blockly/msg/${languageCode}.js`;
-
     script.id = 'langScript';
-
-    
-
     script.onload = () => {
-
         if (languageCode === 'zh-hant') {
-
             langButton.textContent = '切換語言 (English)';
-
         } else {
-
             langButton.textContent = 'Switch Language (中文)';
-
         }
 
-        
-
         const toolbox = getToolbox(languageCode);
-
         const injectConfig = {
-
             toolbox: toolbox,
-
             scrollbars: true,
-
             trashcan: true,
-
             collapse: true,
-
             grid: {spacing: 20, length: 3, colour: '#ccc', snap: true},
-
             locale: languageCode,
 
-            
-
             // **【新增】放大縮小配置**
-
             zoom: {
-
                 controls: true, // 顯示右下角的放大/縮小/適應視窗按鈕
-
                 wheel: false,    // 啟用滑鼠滾輪縮放
-
                 startScale: 1.0, 
-
                 maxScale: 3,
-
                 minScale: 0.3,
-
                 scaleSpeed: 1.2
-
             }
-
         };
 
         workspace = Blockly.inject('blocklyDiv', injectConfig);
-
-        
-
         if (xmlText) {
-
             try {
-
                 const dom = Blockly.Xml.textToDom(xmlText);
-
                 Blockly.Xml.domToWorkspace(dom, workspace);
-
             } catch(e) {
-
                 console.warn("無法恢復工作區 XML:", e);
-
             }
-
         }
-
-        
-
         Blockly.svgResize(workspace);
-
     };
 
-    
-
     document.head.appendChild(script);
-
-  }
-
-
+}
 
   // **切換語言函數**
-
   function switchLanguage() {
-
     const targetLang = currentLanguage === 'zh-hant' ? 'en' : 'zh-hant';
-
     loadLanguage(targetLang);
-
   }
-
-
 
   // **拖曳分割線邏輯 (水平：Blockly 和 I/O)**
-
   function enableResize() {
-
     const resizer = document.getElementById('resizer');
-
-    
-
     resizer.addEventListener('mousedown', function(e) {
-
       isResizing = true;
-
       document.body.style.userSelect = 'none';
-
       document.body.style.cursor = 'col-resize';
-
     });
-
-
 
     document.addEventListener('mousemove', function(e) {
-
       if (!isResizing) return;
-
-
-
       const totalWidth = main.offsetWidth;
-
       let newBlocklyWidth = e.clientX - main.offsetLeft; 
-
-      
-
       const minWidth = 100;
-
       if (newBlocklyWidth < minWidth) {
-
           newBlocklyWidth = minWidth;
-
       } else if (totalWidth - newBlocklyWidth - resizer.offsetWidth < minWidth) {
-
           newBlocklyWidth = totalWidth - minWidth - resizer.offsetWidth;
-
       }
-
-
-
       const newFlexValue = '0 0 ' + newBlocklyWidth + 'px';
-
       blocklyDiv.style.flex = newFlexValue;
-
       lastBlocklyWidth = newFlexValue;
-
-      
-
       Blockly.svgResize(workspace);
-
     });
-
-
 
     document.addEventListener('mouseup', function() {
-
       if (isResizing) {
-
         isResizing = false;
-
         document.body.style.userSelect = 'auto';
-
         document.body.style.cursor = 'default';
-
       }
-
     });
-
   }
-
-
 
   // **垂直拖曳分割線邏輯 (Input 和 Output)**
-
   function enableVResize() {
-
     const vResizer = document.getElementById('v-resizer');
-
     const rightPanel = document.getElementById('rightPanel');
-
     const inputPanel = document.getElementById('inputPanel');
-
     const outputPanel = document.getElementById('outputPanel');
-
     let isVResizing = false;
-
-
-
     vResizer.addEventListener('mousedown', function(e) {
-
       isVResizing = true;
-
       document.body.style.userSelect = 'none';
-
       document.body.style.cursor = 'row-resize';
-
     });
-
-
 
     document.addEventListener('mousemove', function(e) {
-
       if (!isVResizing) return;
-
-
-
       const rightPanelRect = rightPanel.getBoundingClientRect();
-
       let newInputHeight = e.clientY - rightPanelRect.top;
-
-      
-
       const minHeight = 50;
 
-
-
       if (newInputHeight < minHeight) {
-
           newInputHeight = minHeight;
-
       } else if (rightPanelRect.height - newInputHeight - vResizer.offsetHeight < minHeight) {
-
           newInputHeight = rightPanelRect.height - minHeight - vResizer.offsetHeight;
-
       }
-
-
-
       inputPanel.style.height = newInputHeight + 'px';
-
       outputPanel.style.height = (rightPanelRect.height - newInputHeight - vResizer.offsetHeight) + 'px';
-
     });
-
-
 
     document.addEventListener('mouseup', function() {
-
       if (isVResizing) {
-
         isVResizing = false;
-
         document.body.style.userSelect = 'auto';
-
         document.body.style.cursor = 'default';
-
       }
-
     });
-
-  }
-
-
+ }
 
 function judgeOutput(userLines, answerText){
-
     const ansLines = answerText.split('\n').map(s => s.trimEnd());
-
-
-
     outputContent.textContent += "\n=== 判定結果 ===\n";
 
-
-
     // ✅ 檢查 OLE（輸出太多）
-
     if (userLines.length > ansLines.length) {
-
         outputContent.textContent += `OLE：你的輸出行數 ${userLines.length} 超過答案行數 ${ansLines.length}\n`;
-
         return;
-
     }
-
-
 
     // ✅ 比對每行（WA）
-
     for (let i = 0; i < userLines.length; i++) {
-
         if (userLines[i] !== ansLines[i]) {
-
             outputContent.textContent += 
-
               `WA：第 ${i+1} 行不正確\n` +
-
               `你的輸出：${userLines[i]}\n` +
-
               `正確答案：${ansLines[i]}\n`;
-
             return;
-
         }
-
     }
-
-
 
     // ✅ 檢查答案不足（WA）
-
     if (userLines.length < ansLines.length) {
-
         outputContent.textContent += 
-
           `WA：答案不足，你輸出 ${userLines.length} 行，但需要 ${ansLines.length} 行\n`;
-
         return;
-
     }
 
-
-
     // ✅ 全部正確
-
     outputContent.textContent += "✅ AC：通過所有測試\n";
-
 }
 
 
@@ -1114,4 +878,5 @@ function goToHomepage() {
 </script>
 </body>
 </html>
+
 
