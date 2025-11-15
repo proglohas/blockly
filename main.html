@@ -62,13 +62,29 @@ h1 span.title-extra {
     font-weight: normal; /* 不加粗 */
 }
 
+/* --- 新增/修改：分類框架樣式 --- */
 
-#problemList {
-    background-color: #ffffff; /* 列表區域使用白色背景以增加對比 */
-    padding: 20px;
+/* 新增：樣式化每個分類框架 */
+.problem-list-frame {
+    background-color: #ffffff;
+    padding: 10px 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* 較輕的陰影 */
+    margin-bottom: 30px; /* 每個框架之間留出間隔 */
+    border: 1px solid #e0e0e0; /* 加上淺色邊框 */
 }
+
+/* 樣式化新增的分類標題 */
+#problemListContainer h2 {
+    color: #007bff; /* 使用主題色 */
+    border-bottom: 2px solid #a3ccff; /* 淺藍色分隔線 */
+    padding-bottom: 5px;
+    margin-top: 30px;
+    margin-bottom: 10px; /* 標題與列表框架之間的間隔 */
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
 /* 題目連結樣式 */
 a {
     display: block;
@@ -80,8 +96,8 @@ a {
     /* 淡淡的分隔線 */
     border-bottom: 1px solid #e0e0e0; /* 淡淡的灰色分隔線 */
 }
-/* 移除最後一個元素底部的分隔線 */
-a:last-child {
+/* 移除每個框架內最後一個元素底部的分隔線 */
+.problem-list-frame a:last-child {
     border-bottom: none;
 }
 a:hover {
@@ -97,37 +113,92 @@ a:hover {
     <span class="title-main">題目列表</span>
     <div class="title-info">
         <span class="title-email">proglohas@gmail.com</span>
-        <span class="title-extra">旭光高中 / 草屯國中  Blockly 練習網站</span>
+        <span class="title-extra">旭光高中 / 草屯國中 Blockly 練習網站</span>
     </div>
 </h1>
 
-<div id="problemList">Loading...</div>
+<div id="problemListContainer">
+    
+    <h2>基礎題庫</h2>
+    <div id="problemList_1" class="problem-list-frame">Loading...</div>
+    
+    <h2>競賽題庫</h2>
+    <div id="problemList_2" class="problem-list-frame">Loading...</div>
+    
+    <h2>UVA 題庫</h2>
+    <div id="problemList_3" class="problem-list-frame">Loading...</div>
+    
+    <h2>第四類別</h2>
+    <div id="problemList_4" class="problem-list-frame">Loading...</div>
+
+    <h2>不分類 / 其他</h2>
+    <div id="problemList_0" class="problem-list-frame">Loading...</div>
+
+</div>
 
 <script>
+// 定義所有可能的分類 ID 及其對應的 HTML 容器 ID
+const categories = {
+    '1': 'problemList_1', // 基礎題庫
+    '2': 'problemList_2', // 競賽題庫
+    '3': 'problemList_3', // UVA 題庫
+    //'4': 'problemList_4', // 第四類別
+    '0': 'problemList_0', // 不分類 / 其他 (預設)
+};
+
+// 處理初始化畫面，清除 "Loading..." 文字
+Object.values(categories).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+});
+
 fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
-  .then(resp => resp.text())
-  .then(str => (new DOMParser()).parseFromString(str,"text/xml"))
-  .then(xml => {
-    const listDiv = document.getElementById('problemList');
-    listDiv.innerHTML = '';
-    const problems = xml.getElementsByTagName('problem');
-    for(let i=0;i<problems.length;i++){
-      const id = problems[i].getElementsByTagName('id')[0].textContent;
-      const name = problems[i].getElementsByTagName('name')[0].textContent;
-      const a = document.createElement('a');
+  .then(resp => resp.text())
+  .then(str => (new DOMParser()).parseFromString(str,"text/xml"))
+  .then(xml => {
+    const problems = xml.getElementsByTagName('problem');
 
-      // 產生 5 碼亂數字串
-      const rand = Math.random().toString(36).substring(2, 7);
+    for(let i=0;i<problems.length;i++){
+      const problem = problems[i];
+      const id = problem.getElementsByTagName('id')[0].textContent;
+      const name = problem.getElementsByTagName('name')[0].textContent;
+      
+      // *** 讀取 cato 值 ***
+      let catoNode = problem.getElementsByTagName('cato')[0];
+      // 如果 cato 存在，取其內容，否則預設為 '0' (不分類)
+      let cato = catoNode ? catoNode.textContent.trim() : '0';
+      
+      // 根據 cato 值決定要附加到哪一個容器
+      // 如果 cato 不在 categories 列表中，也導向 '0'
+      const targetListId = categories[cato] || categories['0']; 
+      const listDiv = document.getElementById(targetListId);
+      
+      if (!listDiv) {
+          console.error(`找不到 ID 為 ${targetListId} 的容器，請檢查 HTML 結構。`);
+          continue; 
+      }
+      
+      const a = document.createElement('a');
 
-      // 新視窗 + 避免快取
-      a.href = `train.html?id=${id}&v=${rand}`;
-      a.target = "_blank";
+      // 產生 5 碼亂數字串
+      const rand = Math.random().toString(36).substring(2, 7);
 
-      a.textContent = `${id} - ${name}`;
-      listDiv.appendChild(a);
-    }
-  })
-  .catch(err => { console.error(err); document.getElementById('problemList').textContent='讀取錯誤'; });
+      // 新視窗 + 避免快取
+      a.href = `train.html?id=${id}&v=${rand}`;
+      a.target = "_blank";
+
+      a.textContent = `${id} - ${name}`;
+      listDiv.appendChild(a);
+    }
+  })
+  .catch(err => { 
+    console.error(err); 
+    // 如果讀取失敗，所有容器都顯示錯誤訊息
+    Object.values(categories).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent='讀取 XML 錯誤';
+    });
+});
 </script>
 </body>
 </html>
