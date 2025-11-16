@@ -42,6 +42,12 @@
     <name>排序</name>
     <cato>1</cato>
   </problem>
+  <problem>
+    <id>a149</id>
+    <ts>2</ts>
+    <name>乘乘樂</name>
+    <cato>1</cato>
+  </problem>
   
   <problem>
     <id>b969</id>
