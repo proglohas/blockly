@@ -93,6 +93,19 @@ h1 span.title-extra {
     margin-bottom: 10px; /* 標題與列表框架之間的間隔 */
     font-size: 1.5em;
     font-weight: 600;
+    display: flex; /* 讓內容在同一行 */
+    justify-content: space-between; /* 標題和題數統計分開 */
+    align-items: flex-end;
+}
+
+/* 新增的題數統計樣式 */
+#problemListContainer h2 span.count {
+    font-size: 0.6em; /* 讓字體小一點 */
+    color: #555;
+    font-weight: normal;
+    padding-left: 10px;
+    /* 確保 "題數統計" 對齊分隔線底部 */
+    line-height: 1.5; 
 }
 
 /* 列表框架樣式 (已加入固定高度和垂直捲軸) */
@@ -105,8 +118,8 @@ h1 span.title-extra {
     border: 1px solid #e0e0e0;
     
     /* === 關鍵：固定高度與捲軸 === */
-    height: 450px;        /* 設定固定高度 */
-    overflow-y: auto;     /* 內容超出時顯示垂直捲軸 */
+    height: 450px; 
+    overflow-y: auto; 
     /* ========================== */
 }
 
@@ -146,22 +159,22 @@ a:hover {
 <div id="problemListContainer">
     
     <div class="category-group">
-        <h2>基礎題庫</h2>
+        <h2>基礎題庫 <span class="count" id="count_1">( 題數統計 )</span></h2>
         <div id="problemList_1" class="problem-list-frame">Loading...</div>
     </div>
     
     <div class="category-group">
-        <h2>競賽題庫</h2>
+        <h2>競賽題庫 <span class="count" id="count_2">( 題數統計 )</span></h2>
         <div id="problemList_2" class="problem-list-frame">Loading...</div>
     </div>
     
     <div class="category-group">
-        <h2>UVA 題庫</h2>
+        <h2>UVA 題庫 <span class="count" id="count_3">( 題數統計 )</span></h2>
         <div id="problemList_3" class="problem-list-frame">Loading...</div>
     </div>
     
     <div class="category-group">
-        <h2>不分類 / 其他</h2>
+        <h2>不分類 / 其他 <span class="count" id="count_0">( 題數統計 )</span></h2>
         <div id="problemList_0" class="problem-list-frame">Loading...</div>
     </div>
 
@@ -176,6 +189,14 @@ const categories = {
     '0': 'problemList_0', // 不分類 / 其他 (預設)
 };
 
+// **新增：題數統計器**
+const categoryCounts = {
+    '1': 0,
+    '2': 0,
+    '3': 0,
+    '0': 0,
+};
+
 // 處理初始化畫面，清除所有列表中的 "Loading..." 文字
 Object.values(categories).forEach(id => {
     const el = document.getElementById(id);
@@ -184,24 +205,30 @@ Object.values(categories).forEach(id => {
 
 // 使用 fetch 讀取 XML 檔案
 fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
-  .then(resp => resp.text())
-  .then(str => (new DOMParser()).parseFromString(str,"text/xml"))
-  .then(xml => {
-    const problems = xml.getElementsByTagName('problem');
+  .then(resp => resp.text())
+  .then(str => (new DOMParser()).parseFromString(str,"text/xml"))
+  .then(xml => {
+    const problems = xml.getElementsByTagName('problem');
 
-    for(let i=0;i<problems.length;i++){
-      const problem = problems[i];
-      // 讀取 ID 和 NAME
-      const id = problem.getElementsByTagName('id')[0].textContent;
-      const name = problem.getElementsByTagName('name')[0].textContent;
-      
+    for(let i=0;i<problems.length;i++){
+      const problem = problems[i];
+      // 讀取 ID 和 NAME
+      const id = problem.getElementsByTagName('id')[0].textContent;
+      const name = problem.getElementsByTagName('name')[0].textContent;
+      
       // 讀取 cato 值
       let catoNode = problem.getElementsByTagName('cato')[0];
       // 如果 cato 存在，取其內容，否則預設為 '0'
       let cato = catoNode ? catoNode.textContent.trim() : '0';
       
+      // 取得實際的分類 ID (確保 cato 存在於 categories)
+      const actualCato = categories.hasOwnProperty(cato) ? cato : '0';
+
+      // **新增：累計題數**
+      categoryCounts[actualCato]++;
+      
       // 根據 cato 取得目標容器 ID
-      const targetListId = categories[cato] || categories['0']; 
+      const targetListId = categories[actualCato]; 
       const listDiv = document.getElementById(targetListId);
       
       if (!listDiv) {
@@ -209,26 +236,41 @@ fetch(`problemset.xml?ts=${Date.now()}`, { cache: "no-store" })
           continue; 
       }
       
-      const a = document.createElement('a');
+      const a = document.createElement('a');
 
-      // 產生 5 碼亂數字串，用於避免快取
-      const rand = Math.random().toString(36).substring(2, 7);
+      // 產生 5 碼亂數字串，用於避免快取
+      const rand = Math.random().toString(36).substring(2, 7);
 
-      // 設置連結屬性
-      a.href = `train.html?id=${id}&v=${rand}`;
-      a.target = "_blank";
+      // 設置連結屬性
+      a.href = `train.html?id=${id}&v=${rand}`;
+      a.target = "_blank";
 
-      a.textContent = `${id} - ${name}`;
-      listDiv.appendChild(a);
-    }
-  })
-  .catch(err => { 
+      a.textContent = `${id} - ${name}`;
+      listDiv.appendChild(a);
+    }
+
+    // **新增：迴圈結束後，更新題數統計顯示**
+    for (const cato in categoryCounts) {
+        const countSpan = document.getElementById(`count_${cato}`);
+        if (countSpan) {
+            countSpan.textContent = `( ${categoryCounts[cato]} 題 )`;
+        }
+    }
+  })
+  .catch(err => { 
     console.error(err); 
     // 如果讀取失敗，所有容器都顯示錯誤訊息
     Object.values(categories).forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent='讀取 XML 錯誤';
     });
+    // 同時更新所有計數器為錯誤
+    for (const cato in categoryCounts) {
+        const countSpan = document.getElementById(`count_${cato}`);
+        if (countSpan) {
+            countSpan.textContent = `( 讀取錯誤 )`;
+        }
+    }
 });
 </script>
 </body>
