@@ -37,6 +37,12 @@
     <cato>1</cato>
   </problem>
   <problem>
+    <id>a059</id>
+    <ts>5</ts>
+    <name>完全平方和</name>
+    <cato>1</cato>
+  </problem>
+  <problem>
     <id>a104</id>
     <ts>2</ts>
     <name>排序</name>
