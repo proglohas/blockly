@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problem>
+    <title>a149: 乘乘樂</title>
+    <description>
+    <![CDATA[
+內容:
+
+你拿到一個整數，卻忍不住想把每個位數都乘在一起。
+
+例如看到 356 就會想要知道 3 * 5 * 6 的值為何。
+
+輸入說明：
+
+輸入的第一列，有一個數字 T。
+
+接著有 T 個數字 n
+
+輸出說明：
+
+請將每個 n 依題目內容計算後輸出。
+
+      ]]>
+    </description>
+</problem>
