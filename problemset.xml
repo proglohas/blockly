@@ -81,6 +81,13 @@
   </problem>
 
   <problem>
+    <id>c290</id>
+    <ts>3</ts>
+    <name>秘密差   APCS 2017-0304-1</name>
+    <cato>2</cato>
+  </problem>
+  
+  <problem>
     <id>b968</id>
     <ts>4</ts>
     <name>K-I-S-S-I-N-G</name>
