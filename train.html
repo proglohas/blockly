@@ -98,6 +98,11 @@ html, body {
     overflow: hidden;
 }
 
+  /* 設定等寬字體 */
+.fixed-width-font {
+    font-family: 'Courier New', Courier, monospace;
+}
+  
 /* 上半部：Input (重要：設定 flex-grow 和初始 height) */
 #inputPanel {
     flex-grow: 0; 
@@ -105,6 +110,8 @@ html, body {
     border-bottom: 1px solid #ccc;
     background-color: #f8f8f8;
     height: 33%; 
+    /* 設定等寬字體 */
+    font-family: 'Courier New', Courier, monospace;
 }
 
 #ansPanel {
@@ -113,6 +120,8 @@ html, body {
     border-bottom: 1px solid #ccc;
     background-color: #f8f8f8;
     height: 33%; 
+    /* 設定等寬字體 */
+    font-family: 'Courier New', Courier, monospace;
 }
 
 /* 下半部：Output (重要：設定 flex-grow 和初始 height) */
@@ -124,6 +133,8 @@ html, body {
     overflow-y: auto;
     white-space: pre-wrap;
     height: calc(33% - 10px);
+    /* 設定等寬字體 */
+    font-family: 'Courier New', Courier, monospace;
 }
 
 /* 垂直拖曳分割線樣式 */
@@ -904,6 +915,7 @@ function goToHomepage() {
 </script>
 </body>
 </html>
+
 
 
 
