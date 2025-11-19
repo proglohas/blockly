@@ -68,42 +68,31 @@ h1 span.title-extra {
     font-weight: normal; 
 }
 
-/* --- YouTube 影片容器樣式 (新增：響應式設計) --- */
-#videoContainer {
-    max-width: 800px; /* 限制最大寬度 */
-    margin: 20px auto 30px auto; /* 居中並增加上下邊距 */
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    border: 1px solid #e0e0e0;
-}
-
-#videoContainer h2 {
-    color: #007bff;
-    margin-top: 0;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 5px;
-    font-size: 1.2em;
-}
-
-.video-responsive {
-    position: relative;
-    padding-bottom: 56.25%; /* 16:9 比例 (315/560 = 0.5625) */
-    height: 0;
-    overflow: hidden;
+/* --- 新增：說明影片連結區塊樣式 --- */
+#videoLinkBar {
     max-width: 100%;
+    text-align: center;
+    margin: -10px 0 25px 0; /* 調整位置，讓它緊接在 h1 之後 */
+    padding: 10px;
+    background-color: #e6f7ff; /* 淺藍色背景，讓連結顯眼 */
+    border-radius: 6px;
+    border: 1px solid #a3ccff;
 }
 
-.video-responsive iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+#videoLinkBar a {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 5px 10px;
+    display: inline-block;
 }
-/* --- YouTube 影片容器樣式結束 --- */
+
+#videoLinkBar a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+    background-color: transparent; /* 取消懸停時的背景變色 */
+}
+/* --- 說明影片連結區塊樣式結束 --- */
 
 
 /* --- 分欄佈局核心樣式 (Grid 2 欄) --- */
@@ -169,9 +158,8 @@ h1 span.title-extra {
     /* ========================== */
 }
 
-/* 題目連結樣式 */
-a {
-    /* 由於父元素有 padding: 10px 20px，如果希望連結填滿寬度，可以設定 box-sizing */
+/* 題目連結樣式 (覆蓋掉 #videoLinkBar a 的樣式，確保這裡維持 block 顯示) */
+.problem-list-frame a {
     display: block;
     padding: 10px 0;
     margin: 0;
@@ -185,7 +173,7 @@ a {
 .problem-list-frame a:last-child {
     border-bottom: none;
 }
-a:hover {
+.problem-list-frame a:hover {
     text-decoration: none;
     background-color: #e6f7ff; 
     color: #0056b3; 
@@ -202,16 +190,9 @@ a:hover {
     </div>
 </h1>
 
-<div id="videoContainer">
-    <h2>網站使用說明 / Blockly 基本操作介紹</h2>
-    <div class="video-responsive">
-        <iframe 
-            src="https://www.youtube.com/embed/7F9qWODWyU4?rel=0" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-        </iframe>
-    </div>
+<div id="videoLinkBar">
+    👉 
+    <a href="https://youtu.be/7F9qWODWyU4" target="_blank">點此觀看網站使用說明及 Blockly 基本操作介紹影片</a>
 </div>
 <div id="problemListContainer">
     
