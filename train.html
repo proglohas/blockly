@@ -111,8 +111,7 @@ html, body {
     border-bottom: 1px solid #ccc;
     background-color: #f8f8f8;
     height: 33%; 
-    /* ...其他屬性... */
-    font-family: Consolas, 'Lucida Console', monospace !important;
+  
 }
 
 #ansPanel {
@@ -121,8 +120,7 @@ html, body {
     border-bottom: 1px solid #ccc;
     background-color: #f8f8f8;
     height: 33%; 
-    /* ...其他屬性... */
-    font-family: Consolas, 'Lucida Console', monospace !important;
+  
 }
 
 /* 下半部：Output (重要：設定 flex-grow 和初始 height) */
@@ -134,8 +132,7 @@ html, body {
     overflow-y: auto;
     white-space: pre-wrap;
     height: calc(33% - 10px);
-    /* ...其他屬性... */
-    font-family: Consolas, 'Lucida Console', monospace !important;
+   
 }
 
 /* 垂直拖曳分割線樣式 */
@@ -169,6 +166,10 @@ html, body {
     overflow: auto;
     background-color: white;
     resize: none; 
+  
+    /* 確保等寬字體設定 */
+    font-family: Consolas, 'Courier New', Courier, monospace !important;
+  
 }
 
 #ansContent {
@@ -178,6 +179,8 @@ html, body {
     overflow: auto;
     background-color: white;
     resize: none; 
+    /* 確保等寬字體設定 */
+    font-family: Consolas, 'Courier New', Courier, monospace !important;
 }
 
 #outputContent {
@@ -185,6 +188,8 @@ html, body {
     background-color: transparent;
     border: none;
     padding: 0;
+    /* 確保等寬字體設定 */
+    font-family: Consolas, 'Courier New', Courier, monospace !important;
 }
 
 /* **【Modal 樣式】** */
@@ -916,6 +921,7 @@ function goToHomepage() {
 </script>
 </body>
 </html>
+
 
 
 
