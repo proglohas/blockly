@@ -100,7 +100,8 @@ html, body {
 
   /* 設定等寬字體 */
 .fixed-width-font {
-    font-family: 'Courier New', Courier, monospace;
+    /* ...其他屬性... */
+    font-family: Consolas, 'Lucida Console', monospace !important;
 }
   
 /* 上半部：Input (重要：設定 flex-grow 和初始 height) */
@@ -110,8 +111,8 @@ html, body {
     border-bottom: 1px solid #ccc;
     background-color: #f8f8f8;
     height: 33%; 
-    /* 設定等寬字體 */
-    font-family: 'Courier New', Courier, monospace;
+    /* ...其他屬性... */
+    font-family: Consolas, 'Lucida Console', monospace !important;
 }
 
 #ansPanel {
@@ -120,8 +121,8 @@ html, body {
     border-bottom: 1px solid #ccc;
     background-color: #f8f8f8;
     height: 33%; 
-    /* 設定等寬字體 */
-    font-family: 'Courier New', Courier, monospace;
+    /* ...其他屬性... */
+    font-family: Consolas, 'Lucida Console', monospace !important;
 }
 
 /* 下半部：Output (重要：設定 flex-grow 和初始 height) */
@@ -133,8 +134,8 @@ html, body {
     overflow-y: auto;
     white-space: pre-wrap;
     height: calc(33% - 10px);
-    /* 設定等寬字體 */
-    font-family: 'Courier New', Courier, monospace;
+    /* ...其他屬性... */
+    font-family: Consolas, 'Lucida Console', monospace !important;
 }
 
 /* 垂直拖曳分割線樣式 */
@@ -915,6 +916,7 @@ function goToHomepage() {
 </script>
 </body>
 </html>
+
 
 
 
