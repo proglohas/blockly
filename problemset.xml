@@ -43,6 +43,12 @@
     <cato>1</cato>
   </problem>
   <problem>
+    <id>a065</id>
+    <ts>1</ts>
+    <name>提款卡密碼</name>
+    <cato>1</cato>
+  </problem>
+  <problem>
     <id>a104</id>
     <ts>2</ts>
     <name>排序</name>
