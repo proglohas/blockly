@@ -93,6 +93,13 @@
     <name>秘密差   APCS 2017-0304-1</name>
     <cato>2</cato>
   </problem>
+
+   <problem>
+    <id>c636</id>
+    <ts>1</ts>
+    <name>十二生肖</name>
+    <cato>0</cato>
+  </problem>
   
   <problem>
     <id>b968</id>
