@@ -688,9 +688,9 @@ function runCode(){
       }
   }
 
-  // **分享連結** (保持不變)
-  function shareLink() {
+ function shareLink() {
     if (!workspace) return alert("工作區尚未載入，無法分享。");
+    
     // 先嘗試從 URL 取得 id
     const params = new URLSearchParams(window.location.search);
     let id = params.get("id");
@@ -702,12 +702,27 @@ function runCode(){
     // 將 Blockly Workspace 轉成 XML
     const xmlDom = Blockly.Xml.workspaceToDom(workspace);
     const xmlText = Blockly.Xml.domToText(xmlDom);
-    // base64 編碼
-    const encoded = btoa(xmlText);
+    
+    // ====== 🚀 修正中文字符編碼問題的關鍵步驟 ======
+    // 1. 使用 TextEncoder 將 UTF-8 字符串轉換為 Uint8Array (位元組數組)
+    const encoder = new TextEncoder();
+    const utf8Bytes = encoder.encode(xmlText);
+    
+    // 2. 將 Uint8Array 轉換為 btoa() 可以處理的二進制字符串
+    const binaryString = String.fromCharCode.apply(null, utf8Bytes);
+    
+    // 3. 進行 Base64 編碼
+    const encoded = btoa(binaryString);
+    // ===========================================
+
     // 建立完整分享連結
     const idParam = id ? `?id=${id}` : "";
     const url = location.origin + location.pathname + idParam + "#xml=" + encoded;
+    
     openModal(url);
+    // 提示用戶複製連結
+    // 這裡可以考慮加入更友好的複製/提示機制
+    alert("分享連結已產生，請複製彈出視窗中的連結。"); 
 }
 
   // 匯出 XML (保持不變)
@@ -921,6 +936,7 @@ function goToHomepage() {
 </script>
 </body>
 </html>
+
 
 
 
